@@ -56,6 +56,7 @@ jobs:
         env:
           ACADEMIC_SKIP_WORD: "1"
         run: |
-          quarto use template . my-starter-project --no-prompt
+          mkdir my-starter-project
           cd my-starter-project
+          quarto use template .. --no-prompt
           quarto render --to academic-docx --no-clean
