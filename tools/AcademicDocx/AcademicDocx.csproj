@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>academic-docx</AssemblyName>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(WordPiaPath)' == ''">
+    <WordPiaCandidate Include="$(MSBuildProgramFiles32)/Microsoft Visual Studio/Shared/Visual Studio Tools for Office/PIA/Microsoft.Office.Interop.Word.dll" Condition="Exists('$(MSBuildProgramFiles32)/Microsoft Visual Studio/Shared/Visual Studio Tools for Office/PIA/Microsoft.Office.Interop.Word.dll')" />
+    <WordPiaCandidate Include="$(ProgramW6432)/Microsoft Visual Studio/Shared/Visual Studio Tools for Office/PIA/Microsoft.Office.Interop.Word.dll" Condition="Exists('$(ProgramW6432)/Microsoft Visual Studio/Shared/Visual Studio Tools for Office/PIA/Microsoft.Office.Interop.Word.dll')" />
+    <WordPiaCandidate Include="$(windir)/assembly/GAC_MSIL/Microsoft.Office.Interop.Word/*/Microsoft.Office.Interop.Word.dll" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(WordPiaPath)' == ''">
+    <WordPiaPath>@(WordPiaCandidate->'%(FullPath)')</WordPiaPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../AcademicDocx.Core/AcademicDocx.Core.csproj" />
+    <Reference Include="Microsoft.Office.Interop.Word">
+      <HintPath>$(WordPiaPath)</HintPath>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <Target Name="RequireWordPia" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="!Exists('$(WordPiaPath)')" Text="Official Word PIA not found uniquely. Install the Office development assemblies or set -p:WordPiaPath=path/to/Microsoft.Office.Interop.Word.dll. Do not use an unsupported NuGet repackaging." />
+  </Target>
+</Project>

@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="bd682e82-08bf-4d8b-87ea-8887b9e0a543" name="2yash@DESKTOP-H9F324S 2026-10-29 16:04:15" runUser="DESKTOP-H9F324S\2yash" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-29T16:04:15.1064706+05:00" queuing="2026-10-29T16:04:15.1064707+05:00" start="2026-10-29T16:04:13.8082495+05:00" finish="2026-10-29T16:06:42.9533019+05:00" />
+  <TestSettings name="default" id="a9929775-d384-49ba-84fb-82eb3e20dda1">
+    <Deployment runDeploymentRoot="2yash_DESKTOP-H9F324S_2026-10-29_16_04_15" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f3581409-7af2-4e63-9ac2-221d92d5ba61" testId="ce2d4d04-5d02-01ab-0404-bde85615da27" testName="AcademicDocx.Tests.WordMigrationTests.UnsupportedTablesFailWithoutReplacingInput(kind: &quot;nested-table&quot;, message: &quot;Nested tables&quot;)" computerName="DESKTOP-H9F324S" duration="00:00:06.2801954" startTime="2026-10-29T16:05:20.6241178+05:00" endTime="2026-10-29T16:05:26.9037616+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3581409-7af2-4e63-9ac2-221d92d5ba61" />
+    <UnitTestResult executionId="eca17550-2f8e-4b71-9020-a48fb381ffd3" testId="32138f65-0e75-ddbc-514d-e29ba3a17198" testName="AcademicDocx.Tests.WordMigrationTests.UnsupportedTablesFailWithoutReplacingInput(kind: &quot;vertical-body-merge&quot;, message: &quot;vertically merged body cells&quot;)" computerName="DESKTOP-H9F324S" duration="00:00:06.4618330" startTime="2026-10-29T16:04:45.9187200+05:00" endTime="2026-10-29T16:04:52.3800477+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eca17550-2f8e-4b71-9020-a48fb381ffd3" />
+    <UnitTestResult executionId="3de79cfb-b712-433a-8c5f-7ea382ec5f32" testId="0b1d3a6d-ded1-36ab-f23d-45341e836a2e" testName="AcademicDocx.Tests.WordMigrationTests.UnsupportedTablesFailWithoutReplacingInput(kind: &quot;missing-header&quot;, message: &quot;needs a repeating header&quot;)" computerName="DESKTOP-H9F324S" duration="00:00:06.2345672" startTime="2026-10-29T16:05:26.9041285+05:00" endTime="2026-10-29T16:05:33.1384674+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3de79cfb-b712-433a-8c5f-7ea382ec5f32" />
+    <UnitTestResult executionId="783c8da9-7273-44f1-b365-b8e13c74e38e" testId="d002f788-360d-1166-05be-cddbb0872768" testName="AcademicDocx.Tests.WordMigrationTests.RectangularTableHasCorrectLastCaptionAndPreservesRows(count: 48, expectedParts: 2)" computerName="DESKTOP-H9F324S" duration="00:00:14.1937315" startTime="2026-10-29T16:05:39.0063207+05:00" endTime="2026-10-29T16:05:53.1997621+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="783c8da9-7273-44f1-b365-b8e13c74e38e" />
+    <UnitTestResult executionId="24a16fb6-6745-4c54-aa03-e3f7ae64e8ca" testId="80df18c6-8d92-0528-23cf-9d6b5b127650" testName="AcademicDocx.Tests.ReferenceTests.StylesMatchTheRetiredPythonEditor" computerName="DESKTOP-H9F324S" duration="00:00:00.0628821" startTime="2026-10-29T16:04:14.8754070+05:00" endTime="2026-10-29T16:04:14.9379887+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="24a16fb6-6745-4c54-aa03-e3f7ae64e8ca" />
+    <UnitTestResult executionId="5cfb98d6-89f7-4bdb-ab90-ffceb4a1167a" testId="b8451ac6-841c-d9a4-2f29-825e0b12cedb" testName="AcademicDocx.Tests.CliTests.ReportCannotOverwriteTheInputDocument(command: &quot;export-pdf&quot;)" computerName="DESKTOP-H9F324S" duration="00:00:00.1186233" startTime="2026-10-29T16:04:14.3478798+05:00" endTime="2026-10-29T16:04:14.4717950+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5cfb98d6-89f7-4bdb-ab90-ffceb4a1167a" />
+    <UnitTestResult executionId="1ee4ecf2-e92c-43df-9c09-8ef28a8f5a7c" testId="7dff50f6-c732-f202-bde2-6e6aee89f963" testName="AcademicDocx.Tests.ReferenceTests.SchemaValidationFindsDuplicateParagraphProperties" computerName="DESKTOP-H9F324S" duration="00:00:00.0092398" startTime="2026-10-29T16:04:15.1600242+05:00" endTime="2026-10-29T16:04:15.1691682+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1ee4ecf2-e92c-43df-9c09-8ef28a8f5a7c" />
+    <UnitTestResult executionId="361728ca-36a7-4a27-9faa-b42cd4cb528a" testId="557dc13d-6fbd-f68c-b2e4-5ea53fe9dd01" testName="AcademicDocx.Tests.ReferenceTests.StylesKeepNativeHeadingNumbersAndPageFields" computerName="DESKTOP-H9F324S" duration="00:00:00.0729523" startTime="2026-10-29T16:04:14.9858341+05:00" endTime="2026-10-29T16:04:15.0587118+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="361728ca-36a7-4a27-9faa-b42cd4cb528a" />
+    <UnitTestResult executionId="38696411-25bc-4175-ba99-efe42774be0f" testId="c90f231f-9e8a-4f7d-f520-ee4e544cb158" testName="AcademicDocx.Tests.CliTests.PublishedApplicationRunsWithoutDotnetRootOrPath" computerName="DESKTOP-H9F324S" duration="00:00:00.0838940" startTime="2026-10-29T16:04:14.7529217+05:00" endTime="2026-10-29T16:04:14.8361618+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="38696411-25bc-4175-ba99-efe42774be0f" />
+    <UnitTestResult executionId="6dadbf00-9e97-4320-9b5d-c550f2cf7ae6" testId="43938622-908e-1d55-99b0-aef466b0473f" testName="AcademicDocx.Tests.WordMigrationTests.UnsupportedTablesFailWithoutReplacingInput(kind: &quot;oversized-row&quot;, message: &quot;pages&quot;)" computerName="DESKTOP-H9F324S" duration="00:00:28.2433635" startTime="2026-10-29T16:04:52.3805082+05:00" endTime="2026-10-29T16:05:20.6237021+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6dadbf00-9e97-4320-9b5d-c550f2cf7ae6" />
+    <UnitTestResult executionId="94b94e8e-ae3d-4f8c-83fe-92f6ea593ccf" testId="2b2ce105-f6e2-2294-24d3-c18626d8353c" testName="AcademicDocx.Tests.CliTests.ReportCannotOverwriteTheInputDocument(command: &quot;check-word&quot;)" computerName="DESKTOP-H9F324S" duration="00:00:00.0922492" startTime="2026-10-29T16:04:14.4797972+05:00" endTime="2026-10-29T16:04:14.5641716+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94b94e8e-ae3d-4f8c-83fe-92f6ea593ccf" />
+    <UnitTestResult executionId="924206ba-2ee1-4493-af37-58b1321cd55c" testId="616b105e-85ab-5ad5-9f1e-b1a3588f483e" testName="AcademicDocx.Tests.WordMigrationTests.TableReflowsAfterPrecedingContentChanges" computerName="DESKTOP-H9F324S" duration="00:00:24.7661262" startTime="2026-10-29T16:06:18.1425446+05:00" endTime="2026-10-29T16:06:42.9084192+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="924206ba-2ee1-4493-af37-58b1321cd55c" />
+    <UnitTestResult executionId="07260e9c-3282-4536-a493-f55f1dca7db5" testId="e60bd215-b512-93e7-f398-01ed71669e33" testName="AcademicDocx.Tests.ReferenceTests.BottomMarginVariantKeepsTheSameStylesAndNumbering" computerName="DESKTOP-H9F324S" duration="00:00:00.0931731" startTime="2026-10-29T16:04:15.0823684+05:00" endTime="2026-10-29T16:04:15.1598471+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="07260e9c-3282-4536-a493-f55f1dca7db5" />
+    <UnitTestResult executionId="f7fe6afd-66d1-4603-89b8-82fbb23d4a56" testId="f6378ebd-bcbe-f30e-1db0-2285b25f518d" testName="AcademicDocx.Tests.CliTests.ReportCannotOverwriteTheInputDocument(command: &quot;finalize-word&quot;)" computerName="DESKTOP-H9F324S" duration="00:00:00.0967618" startTime="2026-10-29T16:04:14.5648699+05:00" endTime="2026-10-29T16:04:14.6609710+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f7fe6afd-66d1-4603-89b8-82fbb23d4a56" />
+    <UnitTestResult executionId="1d7db9a7-9d09-4757-9b42-db7cac56d056" testId="59e46ab3-c8fb-5a28-27f5-2a1c869f0f35" testName="AcademicDocx.Tests.WordMigrationTests.RectangularTableHasCorrectLastCaptionAndPreservesRows(count: 12, expectedParts: 1)" computerName="DESKTOP-H9F324S" duration="00:00:05.8673617" startTime="2026-10-29T16:05:33.1388067+05:00" endTime="2026-10-29T16:05:39.0059338+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d7db9a7-9d09-4757-9b42-db7cac56d056" />
+    <UnitTestResult executionId="6a92ee76-4bbe-4f98-afcd-14809527eae6" testId="fb08c6ef-0520-dd31-4c52-ec2c50c24623" testName="AcademicDocx.Tests.CliTests.ReportCannotOverwriteTheInputDocument(command: &quot;inspect-word&quot;)" computerName="DESKTOP-H9F324S" duration="00:00:00.0907811" startTime="2026-10-29T16:04:14.6611156+05:00" endTime="2026-10-29T16:04:14.7518101+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6a92ee76-4bbe-4f98-afcd-14809527eae6" />
+    <UnitTestResult executionId="3cefb6e8-8b80-427f-b3aa-4c1192642588" testId="35e54123-79a9-1855-aa45-e83be7cf2f3b" testName="AcademicDocx.Tests.ReferenceTests.FailedStyleValidationPreservesExistingReference" computerName="DESKTOP-H9F324S" duration="00:00:00.0476168" startTime="2026-10-29T16:04:14.9381097+05:00" endTime="2026-10-29T16:04:14.9856941+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3cefb6e8-8b80-427f-b3aa-4c1192642588" />
+    <UnitTestResult executionId="f237af7a-6dc2-40e5-8af1-3e800fb97a75" testId="19f4873f-90a2-0cef-cb75-aaae8b789aee" testName="AcademicDocx.Tests.ReferenceTests.ReapplyingStylesDoesNotDuplicateOrChangeXml" computerName="DESKTOP-H9F324S" duration="00:00:00.5245675" startTime="2026-10-29T16:04:14.3464431+05:00" endTime="2026-10-29T16:04:14.8752253+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f237af7a-6dc2-40e5-8af1-3e800fb97a75" />
+    <UnitTestResult executionId="ec9e7d65-f005-469d-987b-47b30d2f0b7d" testId="94df44b1-9eda-1cc9-b2af-bf2faf5389a1" testName="AcademicDocx.Tests.WordMigrationTests.MergedHeadersMathAndFootersSurviveCompleteFinalization" computerName="DESKTOP-H9F324S" duration="00:00:30.7484271" startTime="2026-10-29T16:04:15.1695361+05:00" endTime="2026-10-29T16:04:45.9180637+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ec9e7d65-f005-469d-987b-47b30d2f0b7d" />
+    <UnitTestResult executionId="526136aa-2aeb-48d9-a38a-5cdd1d5a644c" testId="70d03f49-8b1f-4a2b-8633-9a1ef272745a" testName="AcademicDocx.Tests.WordMigrationTests.RectangularTableHasCorrectLastCaptionAndPreservesRows(count: 90, expectedParts: 3)" computerName="DESKTOP-H9F324S" duration="00:00:24.9423451" startTime="2026-10-29T16:05:53.2001010+05:00" endTime="2026-10-29T16:06:18.1422008+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="526136aa-2aeb-48d9-a38a-5cdd1d5a644c" />
+    <UnitTestResult executionId="79a478c4-f4d9-4c85-ab38-ea50780075f7" testId="20ac6ac9-9735-588e-6df6-33a46edb101e" testName="AcademicDocx.Tests.ReferenceTests.InvalidMarginLeavesExistingOutputUntouched" computerName="DESKTOP-H9F324S" duration="00:00:00.0078279" startTime="2026-10-29T16:04:15.0820837+05:00" endTime="2026-10-29T16:04:15.0821495+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="79a478c4-f4d9-4c85-ab38-ea50780075f7" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AcademicDocx.Tests.ReferenceTests.FailedStyleValidationPreservesExistingReference" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="35e54123-79a9-1855-aa45-e83be7cf2f3b">
+      <Execution id="3cefb6e8-8b80-427f-b3aa-4c1192642588" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.ReferenceTests" name="FailedStyleValidationPreservesExistingReference" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.WordMigrationTests.RectangularTableHasCorrectLastCaptionAndPreservesRows(count: 12, expectedParts: 1)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="59e46ab3-c8fb-5a28-27f5-2a1c869f0f35">
+      <Execution id="1d7db9a7-9d09-4757-9b42-db7cac56d056" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.WordMigrationTests" name="RectangularTableHasCorrectLastCaptionAndPreservesRows" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.WordMigrationTests.TableReflowsAfterPrecedingContentChanges" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="616b105e-85ab-5ad5-9f1e-b1a3588f483e">
+      <Execution id="924206ba-2ee1-4493-af37-58b1321cd55c" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.WordMigrationTests" name="TableReflowsAfterPrecedingContentChanges" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.WordMigrationTests.UnsupportedTablesFailWithoutReplacingInput(kind: &quot;oversized-row&quot;, message: &quot;pages&quot;)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="43938622-908e-1d55-99b0-aef466b0473f">
+      <Execution id="6dadbf00-9e97-4320-9b5d-c550f2cf7ae6" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.WordMigrationTests" name="UnsupportedTablesFailWithoutReplacingInput" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.CliTests.ReportCannotOverwriteTheInputDocument(command: &quot;export-pdf&quot;)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="b8451ac6-841c-d9a4-2f29-825e0b12cedb">
+      <Execution id="5cfb98d6-89f7-4bdb-ab90-ffceb4a1167a" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.CliTests" name="ReportCannotOverwriteTheInputDocument" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.WordMigrationTests.RectangularTableHasCorrectLastCaptionAndPreservesRows(count: 90, expectedParts: 3)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="70d03f49-8b1f-4a2b-8633-9a1ef272745a">
+      <Execution id="526136aa-2aeb-48d9-a38a-5cdd1d5a644c" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.WordMigrationTests" name="RectangularTableHasCorrectLastCaptionAndPreservesRows" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.CliTests.ReportCannotOverwriteTheInputDocument(command: &quot;finalize-word&quot;)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="f6378ebd-bcbe-f30e-1db0-2285b25f518d">
+      <Execution id="f7fe6afd-66d1-4603-89b8-82fbb23d4a56" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.CliTests" name="ReportCannotOverwriteTheInputDocument" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.ReferenceTests.ReapplyingStylesDoesNotDuplicateOrChangeXml" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="19f4873f-90a2-0cef-cb75-aaae8b789aee">
+      <Execution id="f237af7a-6dc2-40e5-8af1-3e800fb97a75" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.ReferenceTests" name="ReapplyingStylesDoesNotDuplicateOrChangeXml" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.CliTests.PublishedApplicationRunsWithoutDotnetRootOrPath" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="c90f231f-9e8a-4f7d-f520-ee4e544cb158">
+      <Execution id="38696411-25bc-4175-ba99-efe42774be0f" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.CliTests" name="PublishedApplicationRunsWithoutDotnetRootOrPath" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.ReferenceTests.BottomMarginVariantKeepsTheSameStylesAndNumbering" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="e60bd215-b512-93e7-f398-01ed71669e33">
+      <Execution id="07260e9c-3282-4536-a493-f55f1dca7db5" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.ReferenceTests" name="BottomMarginVariantKeepsTheSameStylesAndNumbering" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.WordMigrationTests.MergedHeadersMathAndFootersSurviveCompleteFinalization" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="94df44b1-9eda-1cc9-b2af-bf2faf5389a1">
+      <Execution id="ec9e7d65-f005-469d-987b-47b30d2f0b7d" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.WordMigrationTests" name="MergedHeadersMathAndFootersSurviveCompleteFinalization" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.ReferenceTests.StylesMatchTheRetiredPythonEditor" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="80df18c6-8d92-0528-23cf-9d6b5b127650">
+      <Execution id="24a16fb6-6745-4c54-aa03-e3f7ae64e8ca" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.ReferenceTests" name="StylesMatchTheRetiredPythonEditor" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.WordMigrationTests.RectangularTableHasCorrectLastCaptionAndPreservesRows(count: 48, expectedParts: 2)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="d002f788-360d-1166-05be-cddbb0872768">
+      <Execution id="783c8da9-7273-44f1-b365-b8e13c74e38e" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.WordMigrationTests" name="RectangularTableHasCorrectLastCaptionAndPreservesRows" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.WordMigrationTests.UnsupportedTablesFailWithoutReplacingInput(kind: &quot;missing-header&quot;, message: &quot;needs a repeating header&quot;)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="0b1d3a6d-ded1-36ab-f23d-45341e836a2e">
+      <Execution id="3de79cfb-b712-433a-8c5f-7ea382ec5f32" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.WordMigrationTests" name="UnsupportedTablesFailWithoutReplacingInput" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.WordMigrationTests.UnsupportedTablesFailWithoutReplacingInput(kind: &quot;vertical-body-merge&quot;, message: &quot;vertically merged body cells&quot;)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="32138f65-0e75-ddbc-514d-e29ba3a17198">
+      <Execution id="eca17550-2f8e-4b71-9020-a48fb381ffd3" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.WordMigrationTests" name="UnsupportedTablesFailWithoutReplacingInput" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.ReferenceTests.SchemaValidationFindsDuplicateParagraphProperties" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="7dff50f6-c732-f202-bde2-6e6aee89f963">
+      <Execution id="1ee4ecf2-e92c-43df-9c09-8ef28a8f5a7c" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.ReferenceTests" name="SchemaValidationFindsDuplicateParagraphProperties" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.ReferenceTests.InvalidMarginLeavesExistingOutputUntouched" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="20ac6ac9-9735-588e-6df6-33a46edb101e">
+      <Execution id="79a478c4-f4d9-4c85-ab38-ea50780075f7" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.ReferenceTests" name="InvalidMarginLeavesExistingOutputUntouched" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.ReferenceTests.StylesKeepNativeHeadingNumbersAndPageFields" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="557dc13d-6fbd-f68c-b2e4-5ea53fe9dd01">
+      <Execution id="361728ca-36a7-4a27-9faa-b42cd4cb528a" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.ReferenceTests" name="StylesKeepNativeHeadingNumbersAndPageFields" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.CliTests.ReportCannotOverwriteTheInputDocument(command: &quot;check-word&quot;)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="2b2ce105-f6e2-2294-24d3-c18626d8353c">
+      <Execution id="94b94e8e-ae3d-4f8c-83fe-92f6ea593ccf" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.CliTests" name="ReportCannotOverwriteTheInputDocument" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.CliTests.ReportCannotOverwriteTheInputDocument(command: &quot;inspect-word&quot;)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="fb08c6ef-0520-dd31-4c52-ec2c50c24623">
+      <Execution id="6a92ee76-4bbe-4f98-afcd-14809527eae6" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.CliTests" name="ReportCannotOverwriteTheInputDocument" />
+    </UnitTest>
+    <UnitTest name="AcademicDocx.Tests.WordMigrationTests.UnsupportedTablesFailWithoutReplacingInput(kind: &quot;nested-table&quot;, message: &quot;Nested tables&quot;)" storage="d:\repos\ank docx\tools\academicdocx.tests\bin\debug\net10.0\academicdocx.tests.dll" id="ce2d4d04-5d02-01ab-0404-bde85615da27">
+      <Execution id="f3581409-7af2-4e63-9ac2-221d92d5ba61" />
+      <TestMethod codeBase="D:\Repos\ANK DOCX\tools\AcademicDocx.Tests\bin\Debug\net10.0\AcademicDocx.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AcademicDocx.Tests.WordMigrationTests" name="UnsupportedTablesFailWithoutReplacingInput" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ce2d4d04-5d02-01ab-0404-bde85615da27" executionId="f3581409-7af2-4e63-9ac2-221d92d5ba61" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="32138f65-0e75-ddbc-514d-e29ba3a17198" executionId="eca17550-2f8e-4b71-9020-a48fb381ffd3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b1d3a6d-ded1-36ab-f23d-45341e836a2e" executionId="3de79cfb-b712-433a-8c5f-7ea382ec5f32" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d002f788-360d-1166-05be-cddbb0872768" executionId="783c8da9-7273-44f1-b365-b8e13c74e38e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="80df18c6-8d92-0528-23cf-9d6b5b127650" executionId="24a16fb6-6745-4c54-aa03-e3f7ae64e8ca" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8451ac6-841c-d9a4-2f29-825e0b12cedb" executionId="5cfb98d6-89f7-4bdb-ab90-ffceb4a1167a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7dff50f6-c732-f202-bde2-6e6aee89f963" executionId="1ee4ecf2-e92c-43df-9c09-8ef28a8f5a7c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="557dc13d-6fbd-f68c-b2e4-5ea53fe9dd01" executionId="361728ca-36a7-4a27-9faa-b42cd4cb528a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c90f231f-9e8a-4f7d-f520-ee4e544cb158" executionId="38696411-25bc-4175-ba99-efe42774be0f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43938622-908e-1d55-99b0-aef466b0473f" executionId="6dadbf00-9e97-4320-9b5d-c550f2cf7ae6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b2ce105-f6e2-2294-24d3-c18626d8353c" executionId="94b94e8e-ae3d-4f8c-83fe-92f6ea593ccf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="616b105e-85ab-5ad5-9f1e-b1a3588f483e" executionId="924206ba-2ee1-4493-af37-58b1321cd55c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e60bd215-b512-93e7-f398-01ed71669e33" executionId="07260e9c-3282-4536-a493-f55f1dca7db5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6378ebd-bcbe-f30e-1db0-2285b25f518d" executionId="f7fe6afd-66d1-4603-89b8-82fbb23d4a56" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59e46ab3-c8fb-5a28-27f5-2a1c869f0f35" executionId="1d7db9a7-9d09-4757-9b42-db7cac56d056" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fb08c6ef-0520-dd31-4c52-ec2c50c24623" executionId="6a92ee76-4bbe-4f98-afcd-14809527eae6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35e54123-79a9-1855-aa45-e83be7cf2f3b" executionId="3cefb6e8-8b80-427f-b3aa-4c1192642588" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="19f4873f-90a2-0cef-cb75-aaae8b789aee" executionId="f237af7a-6dc2-40e5-8af1-3e800fb97a75" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="94df44b1-9eda-1cc9-b2af-bf2faf5389a1" executionId="ec9e7d65-f005-469d-987b-47b30d2f0b7d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70d03f49-8b1f-4a2b-8633-9a1ef272745a" executionId="526136aa-2aeb-48d9-a38a-5cdd1d5a644c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20ac6ac9-9735-588e-6df6-33a46edb101e" executionId="79a478c4-f4d9-4c85-ab38-ea50780075f7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="21" executed="21" passed="21" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AcademicDocx.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  AcademicDocx.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    AcademicDocx.Tests&#xD;
+[xUnit.net 00:02:28.74]   Finished:    AcademicDocx.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,81 @@
+{
+  "archive": "service-layer-before-csharp-2026-10-29.zip",
+  "sha256": "c54d0646457b210364c426c4ed48c04814d22a8a4c63aa51c0b0fa7ea02fae00",
+  "files": [
+    {
+      "path": "manifest.json",
+      "length": 1420,
+      "sha256": "30436d3e041a5e2c473c4cf87bf54c05f59b013a786a5cbfd0b9d2439483fbbc"
+    },
+    {
+      "path": "requirements.txt",
+      "length": 46,
+      "sha256": "e71bc09f103eecddd0d83e5089db626fcc13bf68173a55a9736ce8a9c3fef093"
+    },
+    {
+      "path": "scripts/bootstrap-graphics.ps1",
+      "length": 1619,
+      "sha256": "0caac7f29abea8c66dce467fb9bf99aec69ccc78afa1cb9adbb855bd8767b01a"
+    },
+    {
+      "path": "scripts/bootstrap-quarto.ps1",
+      "length": 1202,
+      "sha256": "bfb6ae9424b461636272caba1f5cc46d0f3fe741ed94e9288727e64251077b0a"
+    },
+    {
+      "path": "scripts/bootstrap-r.ps1",
+      "length": 1207,
+      "sha256": "02cb1596ba3266cb6406afecb7496b5683c03e12392093ca63047561e9e5f8eb"
+    },
+    {
+      "path": "scripts/quarto-export.ps1",
+      "length": 1464,
+      "sha256": "c83dc74aff427d4c47938fe8f909f82ba9a4abddc7fefc8c2693ffa28b553412"
+    },
+    {
+      "path": "scripts/setup.ps1",
+      "length": 959,
+      "sha256": "4ca0ee9ac7990dcedaa61ab4780282712ebe34baa0ffde5d522cd342c8bf3e66"
+    },
+    {
+      "path": "academic/tools/check-word.ps1",
+      "length": 5871,
+      "sha256": "bc5082f7378f5e9181bf1aef7a6e65ac77de2cf31b13a030103184fdb87eb98a"
+    },
+    {
+      "path": "academic/tools/style-reference.py",
+      "length": 9504,
+      "sha256": "4903c8e24b9b4b6a6a8ba309681e528b52981034c1fe32a0751279bed6f0f38a"
+    },
+    {
+      "path": "tools/validate/packages.lock.json",
+      "length": 947,
+      "sha256": "9cb706b11c2c50f584c648154a5652448406ce219bbacb412d51d3594b0bad78"
+    },
+    {
+      "path": "tools/validate/Program.cs",
+      "length": 760,
+      "sha256": "35622250a6326d622abc01b940046777024fba0514cc6205010d0a2c8777d4d2"
+    },
+    {
+      "path": "tools/validate/validate.csproj",
+      "length": 401,
+      "sha256": "c426ccd78c5045e6eed0b13f48d31c3ffc6ff9d81303ce0a68a2c4f38c5bdc1a"
+    },
+    {
+      "path": "academic/_extensions/academic/finalize.R",
+      "length": 14900,
+      "sha256": "4481bd205651a8d6d742d6309ceba8d0848cb0cffb7ab8630454f4b4940013ea"
+    },
+    {
+      "path": "academic/_extensions/academic/tables-word.ps1",
+      "length": 7487,
+      "sha256": "7f3c712af41e8a47f30f4bf953e4af43b51b043231c3c809ca8e735d13c2dc04"
+    },
+    {
+      "path": "academic/_extensions/academic/update-word.ps1",
+      "length": 4139,
+      "sha256": "fabd15e8846a72a88f2caac601c1c854692d2f6bc5bfa66c5291b069ad6da790"
+    }
+  ]
+}

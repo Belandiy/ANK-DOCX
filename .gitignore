@@ -1,0 +1,68 @@
+# Local tools, generated output and historical archives.
+/.tools/
+/build/
+/output/
+/archive/*
+!/archive/README.md
+
+# Quarto/knitr output; reference documents and test fixtures stay tracked.
+**/.quarto/
+**/_book/
+**/*_files/
+**/*.knit.md
+/academic/*.docx
+/academic/*.pdf
+
+# R environment: keep renv.lock, activate.R and settings.json.
+**/renv/library/
+**/renv/local/
+**/renv/cellar/
+**/renv/lock/
+**/renv/python/
+**/renv/sandbox/
+**/renv/staging/
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# .NET build/test output; retain the curated acceptance evidence.
+**/bin/
+**/obj/
+**/TestResults/
+*.trx
+!/docs/research/evidence/**/*.trx
+*.exe
+*.dll
+*.pdb
+*.nupkg
+*.snupkg
+*.msi
+
+# Editor, OS and Office temporary files.
+.vs/
+.idea/
+*.suo
+*.user
+~$*
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Optional scientific Python projects may exist; never commit their caches.
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local credentials and signing keys.
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pfx
+*.p12
+*.pem
+*.key

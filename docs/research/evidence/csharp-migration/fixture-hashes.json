@@ -1,0 +1,18 @@
+[
+  {
+    "name": "book-before-word.docx",
+    "sha256": "9941d5363dc4f1cd708640bbb37d181e2700dc1160352129bf537893587763e7"
+  },
+  {
+    "name": "pagination.docx",
+    "sha256": "6e529bbf1bfbfbcdfbf4183aca10f3eb4649cc8ed322a032233ba2df58fe5f3f"
+  },
+  {
+    "name": "README.md",
+    "sha256": "6109c87559c93261cab8f594d1f08c27bdfaa790c807693a26dccf9cbe3b47e6"
+  },
+  {
+    "name": "reference-legacy.docx",
+    "sha256": "0455bb0e6617f37424c66a0d29e378a6b2c44335dfb7c32d8d113250dc0998f8"
+  }
+]

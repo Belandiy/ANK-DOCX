@@ -1,0 +1,38 @@
+{
+  "academic_extension": {
+    "version": "0.1.0",
+    "r_lockfile": "academic/renv.lock",
+    "required_finalizer": "Microsoft Word desktop on Windows"
+  },
+  "r": "4.6.1",
+  "quarto": {
+    "version": "1.10.19",
+    "pandoc": "3.10",
+    "windows_zip_sha256": "a9c62e4fef34ea05d4dd9175d905f80f0542414a1ae17a9d45698f6646c01173"
+  },
+  "svg_converter": {
+    "version": "librsvg 2.60.0",
+    "distribution_release": "v1.0.0",
+    "url": "https://github.com/charls-data/static-rsvg-convert/releases/download/v1.0.0/win-static-x64.zip",
+    "sha256": "e3ece37e9b80e907d1c0d4cf6e952c60f9e8d1e9a293f140b32b2ec665a809d3"
+  },
+  "docx_service": {
+    "language": "C#",
+    "framework": "net10.0-windows",
+    "portable_core": "net10.0",
+    "runtime_identifier": "win-x64",
+    "deployment": "self-contained",
+    "sdk_verified": "10.0.401",
+    "runtime_verified": "10.0.12",
+    "openxml_sdk": "3.3.0",
+    "office_interop": "Official installed Word PIA; EmbedInteropTypes=true",
+    "project": "tools/AcademicDocx/AcademicDocx.csproj",
+    "core_project": "tools/AcademicDocx.Core/AcademicDocx.Core.csproj",
+    "package_locks": [
+      "tools/AcademicDocx/packages.lock.json",
+      "tools/AcademicDocx.Core/packages.lock.json",
+      "tools/AcademicDocx.Tests/packages.lock.json"
+    ]
+  },
+  "historical_dependencies": "archive/research-2026-10-29.zip:dependencies.lock.json"
+}

@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-29",
+  "scope": "Remove first-party Python/PS1 infrastructure; keep Quarto/R/Lua and scientific project languages",
+  "versions": {
+    "r": "4.6.1",
+    "dotnet_runtime": "10.0.12",
+    "word_pia": "15.0.4603.1000",
+    "quarto": "1.10.19",
+    "dotnet_sdk": "10.0.401",
+    "word": "16.0.20326",
+    "openxml_sdk": "3.3.0",
+    "librsvg": "2.60.0"
+  },
+  "build": {
+    "errors": 0,
+    "included_frameworks": [
+      {
+        "name": "Microsoft.NETCore.App",
+        "version": "10.0.12"
+      }
+    ],
+    "exit_code": 0,
+    "warnings": 0,
+    "deployment": "self-contained win-x64",
+    "pia_dll_in_distribution": false
+  },
+  "tests": {
+    "word_scenarios": 9,
+    "skipped": 0,
+    "exit_code": 0,
+    "failed": 0,
+    "portable": 7,
+    "passed": 21,
+    "cli": 5
+  },
+  "quarto": {
+    "referat": {
+      "pages": 10,
+      "schema_errors": 0,
+      "output": "academic/_book/referat-csharp-qa.docx",
+      "exit_code": 0
+    },
+    "coursework": {
+      "pages": 11,
+      "schema_errors": 0,
+      "output": "academic/_book/coursework-csharp-qa.docx",
+      "exit_code": 0
+    }
+  },
+  "word_mutation_checks": {
+    "passed": 10,
+    "table_target": "tbl_results",
+    "skipped": 0
+  },
+  "pdf": {
+    "visually_checked_coursework_pages": [
+      8,
+      9,
+      10
+    ],
+    "both_exports_and_clean_word_exit": true,
+    "referat_pages": 10,
+    "coursework_pages": 11
+  },
+  "setup": {
+    "authenticode_unsigned_rejected": true,
+    "renv_consistent": true,
+    "authenticode_signed_accepted": true,
+    "existing_environment_restore_exit_code": 0,
+    "clean_machine_installation_tested": false
+  },
+  "source_audit": {
+    "direct_doconv_dependency_removed": true,
+    "removed_first_party_files": 13,
+    "active_python_or_ps1": []
+  },
+  "archive_sha256": "c54d0646457b210364c426c4ed48c04814d22a8a4c63aa51c0b0fa7ea02fae00",
+  "remaining": "R-hook direct OOXML transformations remain; no Linux/full Office-free release claimed"
+}

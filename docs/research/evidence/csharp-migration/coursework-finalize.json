@@ -1,0 +1,29 @@
+{
+  "file": "D:\\Repos\\ANK DOCX\\academic\\_book\\coursework-csharp-qa.docx",
+  "passed": true,
+  "schema_errors_before_word": 1511,
+  "validation": {
+    "file": ".academic-b63ab9641f8b4110b9f53f4962ac08ba.docx",
+    "error_count": 0,
+    "errors": []
+  },
+  "pages": 11,
+  "split_tables": [
+    {
+      "name": "tbl_squares",
+      "table_indices": [
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "word": {
+    "version": "16.0",
+    "build": "16.0.20326",
+    "process_id": 19756,
+    "process_exited": true,
+    "cleanup_errors": []
+  },
+  "error": null
+}
