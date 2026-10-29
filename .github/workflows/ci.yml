@@ -38,7 +38,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libxml2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libjpeg-dev libtiff-dev libssl-dev libcurl4-openssl-dev
+          sudo apt-get install -y cmake gdal-bin libabsl-dev libcairo2-dev libfontconfig1-dev libgdal-dev libgeos-dev libnode-dev libproj-dev libudunits2-dev libuv1-dev libxslt-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libjpeg-dev libtiff-dev libssl-dev libcurl4-openssl-dev
 
       - name: Restore R packages (renv)
         run: |
