@@ -15,6 +15,36 @@ public sealed class ReferenceTests : IDisposable
     public ReferenceTests() => Directory.CreateDirectory(folder);
 
     [Fact]
+    public void ListingStylesAreAppliedCorrectlyAndPassValidation()
+    {
+        var output = Path.Combine(folder, "listings.docx");
+        ReferenceStyles.Apply(Source, output);
+        Assert.Empty(DocxInspection.Validate(output).Errors);
+        using var document = WordprocessingDocument.Open(output, false);
+        var main = document.MainDocumentPart!;
+        var styles = main.StyleDefinitionsPart!.Styles!;
+
+        var sourceCode = styles.Elements<W.Style>().Single(s => s.StyleId == "SourceCode");
+        Assert.Equal("Courier New", sourceCode.StyleRunProperties!.GetFirstChild<W.RunFonts>()!.Ascii!.Value);
+        Assert.Equal("24", sourceCode.StyleRunProperties.GetFirstChild<W.FontSize>()!.Val!.Value);
+        Assert.Equal("0", sourceCode.StyleParagraphProperties!.Indentation!.FirstLine!.Value);
+        Assert.Equal("240", sourceCode.StyleParagraphProperties.SpacingBetweenLines!.Line!.Value);
+        Assert.Null(sourceCode.StyleParagraphProperties.GetFirstChild<W.ParagraphBorders>());
+
+        var code = styles.Elements<W.Style>().Single(s => s.StyleId == "Code");
+        Assert.Equal("Courier New", code.StyleRunProperties!.GetFirstChild<W.RunFonts>()!.Ascii!.Value);
+        Assert.Equal("24", code.StyleRunProperties.GetFirstChild<W.FontSize>()!.Val!.Value);
+
+        var listingCaption = styles.Elements<W.Style>().Single(s => s.StyleId == "ListingCaption");
+        Assert.Equal("Times New Roman", listingCaption.StyleRunProperties!.GetFirstChild<W.RunFonts>()!.Ascii!.Value);
+        Assert.Equal("28", listingCaption.StyleRunProperties.GetFirstChild<W.FontSize>()!.Val!.Value);
+        Assert.Equal(W.JustificationValues.Left, listingCaption.StyleParagraphProperties!.Justification!.Val!.Value);
+        Assert.Equal("0", listingCaption.StyleParagraphProperties.Indentation!.FirstLine!.Value);
+        Assert.NotNull(listingCaption.StyleParagraphProperties.GetFirstChild<W.KeepNext>());
+        Assert.True(listingCaption.StyleParagraphProperties.GetFirstChild<W.KeepNext>()!.Val?.Value ?? true);
+    }
+
+    [Fact]
     public void StylesKeepNativeHeadingNumbersAndPageFields()
     {
         var output = Path.Combine(folder, "styled.docx");
