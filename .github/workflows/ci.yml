@@ -25,6 +25,8 @@ jobs:
   quarto-check:
     name: Quarto Extension and Filters Check
     runs-on: ubuntu-latest
+    env:
+      RENV_PATHS_LIBRARY: /home/runner/work/_temp/Library
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
