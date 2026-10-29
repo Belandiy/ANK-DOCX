@@ -38,11 +38,12 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libxml2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libjpeg-dev libtiff-dev
+          sudo apt-get install -y libxml2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libjpeg-dev libtiff-dev libssl-dev libcurl4-openssl-dev
 
-      - name: Install R packages
+      - name: Restore R packages (renv)
         run: |
-          Rscript -e 'install.packages(c("xml2", "jsonlite", "digest", "zip", "yaml", "officer", "flextable", "equatags", "ggplot2", "ggpattern", "ragg", "svglite", "knitr", "rmarkdown"))'
+          cd academic
+          Rscript -e 'renv::restore()'
 
       - name: Trial Render (Diagnostic Mode)
         env:
