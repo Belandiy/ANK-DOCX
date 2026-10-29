@@ -7,6 +7,74 @@ using M = DocumentFormat.OpenXml.Math;
 
 namespace AcademicDocx.Core;
 
+public sealed record DiagnosticItem(
+    string Rule,
+    string Severity,
+    string? File,
+    string? SectionId,
+    string? SectionTitle,
+    string? ObjectId,
+    string? Location,
+    string Message,
+    string Recommendation
+);
+
+public sealed record DiagnosticReport(IReadOnlyList<DiagnosticItem> Diagnostics)
+{
+    public string FormatConsoleSummary()
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("=== Сводка диагностики ANK ===");
+        sb.AppendLine();
+
+        if (Diagnostics.Count == 0)
+        {
+            sb.AppendLine("[Информация] BINDING_SUCCESS");
+            sb.AppendLine("  Сборка завершена успешно. Замечаний не обнаружено.");
+            return sb.ToString();
+        }
+
+        foreach (var item in Diagnostics)
+        {
+            var severityTitle = item.Severity switch
+            {
+                "Error" => "Ошибка",
+                "Warning" => "Предупреждение",
+                "Info" => "Информация",
+                _ => item.Severity
+            };
+
+            sb.AppendLine($"[{severityTitle}] {item.Rule}");
+
+            var locationParts = new List<string>();
+            if (!string.IsNullOrEmpty(item.File)) locationParts.Add(item.File);
+            if (!string.IsNullOrEmpty(item.SectionTitle))
+            {
+                var sec = $"заголовок «{item.SectionTitle}»";
+                if (!string.IsNullOrEmpty(item.SectionId)) sec += $" (#{item.SectionId})";
+                locationParts.Add(sec);
+            }
+            else if (!string.IsNullOrEmpty(item.SectionId))
+            {
+                locationParts.Add($"раздел #{item.SectionId}");
+            }
+            if (!string.IsNullOrEmpty(item.ObjectId)) locationParts.Add($"объект #{item.ObjectId}");
+            if (!string.IsNullOrEmpty(item.Location) && locationParts.Count == 0) locationParts.Add(item.Location);
+
+            if (locationParts.Count > 0)
+            {
+                sb.AppendLine($"  Источник: {string.Join(", ", locationParts)}");
+            }
+
+            sb.AppendLine($"  Проблема: {item.Message}");
+            sb.AppendLine($"  Рекомендация: {item.Recommendation}");
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+}
+
 public sealed record SchemaError(string Id, string Type, string Description, string? Part, string? Path);
 public sealed record ValidationReport(string File, int ErrorCount, IReadOnlyList<SchemaError> Errors);
 public sealed record TableFacts(IReadOnlyList<string[]> Rows, int HeaderRows, IReadOnlyList<string> HeaderShape,

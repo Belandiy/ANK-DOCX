@@ -11,6 +11,7 @@ internal sealed class FinalizationReport
     public ValidationReport? Validation { get; set; }
     public int? Pages { get; set; }
     public List<TableSplitReport> SplitTables { get; } = [];
+    public List<DiagnosticItem> Diagnostics { get; set; } = [];
     public WordLifecycle? Word { get; set; }
     public string? Error { get; set; }
 }
@@ -128,7 +129,19 @@ internal static class WordFinalizer
                 end.End -= 2;
                 end.Collapse(Word.WdCollapseDirection.wdCollapseEnd);
                 if (WordTables.Page(session.Objects, range) != WordTables.Page(session.Objects, end))
-                    throw new InvalidDataException($"Table fragment {index} spans pages after Word normalization");
+                {
+                    report.Diagnostics.Add(new DiagnosticItem(
+                        Rule: "TBL_ROW_CROSS_PAGE",
+                        Severity: "Warning",
+                        File: null,
+                        SectionId: null,
+                        SectionTitle: null,
+                        ObjectId: $"table-fragment-{index}",
+                        Location: $"фрагмент таблицы {index}",
+                        Message: $"Фрагмент таблицы {index} пересекает границу страниц после финализации Word.",
+                        Recommendation: "Рассмотрите возможность переноса таблицы в приложение или сокращения/группировки строк."
+                    ));
+                }
             }
             report.Pages = WordFields.StabilizePages(session);
             document.Save();
@@ -142,6 +155,24 @@ internal static class WordFinalizer
                 throw new InvalidDataException("Word did not save an updated TOC");
             File.Move(staged, path, overwrite: true);
             report.Passed = true;
+
+            // Load Lua AST diagnostics if present
+            var diagPath = Path.Combine(Path.GetDirectoryName(path) ?? ".", ".quarto", "academic-diagnostics.json");
+            if (File.Exists(diagPath))
+            {
+                try
+                {
+                    var astDiags = System.Text.Json.JsonSerializer.Deserialize<List<DiagnosticItem>>(
+                        File.ReadAllText(diagPath),
+                        JsonReport.Options
+                    );
+                    if (astDiags is not null)
+                    {
+                        report.Diagnostics.InsertRange(0, astDiags);
+                    }
+                }
+                catch { /* Ignore diagnostic load failures */ }
+            }
         }
         catch (Exception error) { report.Error = error.ToString(); }
         finally
