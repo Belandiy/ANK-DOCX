@@ -63,18 +63,26 @@ local function para(p)
   end
 end
 local function cite(c)
-  if #c.citations > 1 then
-    error('Grouped citations are not yet supported by academic-docx 0.1; use individual citations.')
-  end
-  if #c.citations==1 then
-    local id=c.citations[1].id
+  local is_crossref = false
+  for _, citation in ipairs(c.citations) do
+    local id = citation.id
     if id:match('^fig%-') or id:match('^tbl%-') or id:match('^eq%-') or id:match('^sec%-') then
-      local reference=field('REF '..bookmark(id)..(id:match('^sec%-') and ' \\n' or '')..' \\h')
-      if id:match('^eq%-') then
-        reference='<w:r><w:t>(</w:t></w:r>'..reference..'<w:r><w:t>)</w:t></w:r>'
-      end
-      return pandoc.RawInline('openxml',reference)
+      is_crossref = true
+      break
     end
   end
+
+  if is_crossref then
+    if #c.citations > 1 then
+      error('Grouped cross-references (fig, tbl, eq, sec) are not yet supported; use individual cross-references.')
+    end
+    local id = c.citations[1].id
+    local reference = field('REF ' .. bookmark(id) .. (id:match('^sec%-') and ' \\n' or '') .. ' \\h')
+    if id:match('^eq%-') then
+      reference = '<w:r><w:t>(</w:t></w:r>' .. reference .. '<w:r><w:t>)</w:t></w:r>'
+    end
+    return pandoc.RawInline('openxml', reference)
+  end
+  return nil
 end
 return {{Pandoc=process},{Para=para},{Cite=cite}}

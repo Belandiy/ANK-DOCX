@@ -125,28 +125,15 @@ for (output in outputs) {
     for (part in xml_find_all(number, "./*[not(self::w:pPr)]", ns)) xml_add_child(previous, part)
     xml_remove(number)
   }
-  # Linked citeproc citations retain source IDs; replace only recognized targets.
+  # Linked citeproc citations retain source IDs; verify target validity.
   citations <- xml_find_all(doc, "//w:hyperlink[starts-with(@w:anchor,'ref-')]", ns)
   source_ids <- vapply(sources, function(s) s$id, "")
   for (citation in citations) {
     key <- sub("^ref-", "", attr(citation, "w:anchor"))
     if (!key %in% source_ids) stop("Unknown bibliography source: ", key)
-    # CITATION supplies its own parentheses; remove the adjacent citeproc pair.
-    before <- xml_find_first(citation,"preceding-sibling::w:r[1]/w:t[last()]",ns)
-    after <- xml_find_first(citation,"following-sibling::w:r[1]/w:t[1]",ns)
-    if (!inherits(before,"xml_missing") && !inherits(after,"xml_missing") && grepl("\\($",xml_text(before)) && grepl("^\\)",xml_text(after))) {
-      xml_text(before) <- sub("\\($","",xml_text(before))
-      xml_text(after) <- sub("^\\)","",xml_text(after))
-    }
-    for (part in xml_children(read_xml(paste0('<root xmlns:w="', W, '">', field(paste0("CITATION ", key, " \\l 1049")), '</root>')))) xml_add_sibling(citation, part, .where = "before")
-    xml_remove(citation)
   }
   bib <- xml_find_all(doc, "//w:p[w:pPr/w:pStyle[@w:val='Bibliography']]", ns)
   if (length(sources) && (!length(citations) || !length(bib))) stop("Expected linked citations and a bibliography")
-  if (length(bib)) {
-    xml_add_sibling(bib[[1]], node(paste0('<w:p>', field("BIBLIOGRAPHY \\l 1049"), '</w:p>')), .where = "before")
-    xml_remove(bib)
-  }
   # A narrow supported source mapping; reject unsupported types rather than inventing data.
   source_xml <- character()
   tag <- function(n, v) if (is.null(v) || !length(v)) "" else paste0('<b:', n, '>', escape(v), '</b:', n, '>')

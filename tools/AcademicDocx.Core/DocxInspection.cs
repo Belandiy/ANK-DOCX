@@ -11,6 +11,8 @@ public sealed record SchemaError(string Id, string Type, string Description, str
 public sealed record ValidationReport(string File, int ErrorCount, IReadOnlyList<SchemaError> Errors);
 public sealed record TableFacts(IReadOnlyList<string[]> Rows, int HeaderRows, IReadOnlyList<string> HeaderShape,
     int MathCount, IReadOnlyList<int> GridWidths);
+public sealed record CitationFacts(IReadOnlyList<string> CitedKeys, IReadOnlyList<string> SourceTags,
+    IReadOnlyList<string> UncitedSources);
 public sealed record DocumentFacts(int MathCount, int SequenceCount, IReadOnlyList<TableFacts> Tables,
     IReadOnlyList<string> Fields, IReadOnlyList<string> SourceTags);
 
@@ -80,6 +82,32 @@ public static class DocxInspection
             headerRows, shape, table.Descendants<M.OfficeMath>().Count(),
             table.GetFirstChild<W.TableGrid>()?.Elements<W.GridColumn>()
                 .Select(column => int.Parse(column.Width?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture)).ToArray() ?? []);
+    }
+
+    public static CitationFacts ReadCitations(string path)
+    {
+        using var package = WordprocessingDocument.Open(path, false);
+        var main = package.MainDocumentPart ?? throw new InvalidDataException("DOCX has no main document part");
+        var document = main.Document;
+
+        var citedKeys = document.Descendants<W.Hyperlink>()
+            .Select(h => h.Anchor?.Value)
+            .Where(anchor => !string.IsNullOrEmpty(anchor) && anchor.StartsWith("ref-", StringComparison.Ordinal))
+            .Select(anchor => anchor!["ref-".Length..])
+            .Distinct()
+            .ToArray();
+
+        var sourceTags = new List<string>();
+        foreach (var part in main.CustomXmlParts)
+        {
+            using var stream = part.GetStream(FileMode.Open, FileAccess.Read);
+            var xml = System.Xml.Linq.XDocument.Load(stream);
+            System.Xml.Linq.XNamespace b = "http://schemas.openxmlformats.org/officeDocument/2006/bibliography";
+            sourceTags.AddRange(xml.Descendants(b + "Tag").Select(tag => tag.Value));
+        }
+
+        var uncited = sourceTags.Where(tag => !citedKeys.Contains(tag)).Distinct().ToArray();
+        return new(citedKeys, sourceTags, uncited);
     }
 
     // Compare logical rows, not serialization details that Word is allowed to normalize.
