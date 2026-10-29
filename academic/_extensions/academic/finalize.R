@@ -155,6 +155,13 @@ for (output in outputs) {
   types <- read_xml(file.path(folder,"[Content_Types].xml"))
   xml_add_child(types,read_xml('<Override xmlns="http://schemas.openxmlformats.org/package/2006/content-types" PartName="/customXml/itemProps1.xml" ContentType="application/vnd.openxmlformats-officedocument.customXmlProperties+xml"/>'))
   write_xml(types,file.path(folder,"[Content_Types].xml"))
+  # Ensure title page page number hiding (<w:titlePg/>) in section properties
+  sections <- xml_find_all(doc, "//w:sectPr", ns)
+  for (sect in sections) {
+    if (!length(xml_find_all(sect, "./w:titlePg", ns))) {
+      xml_add_child(sect, read_xml(paste0('<w:titlePg xmlns:w="', W, '"/>')))
+    }
+  }
   # Structural preflight: no missing REF targets or duplicate semantic bookmarks.
   names <- vapply(xml_find_all(doc,"//w:bookmarkStart",ns),attr,"",name="w:name")
   refs <- xml_text(xml_find_all(doc,"//w:instrText[starts-with(normalize-space(.),'REF ')]",ns))

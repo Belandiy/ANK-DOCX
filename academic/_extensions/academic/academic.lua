@@ -17,24 +17,68 @@ end
 local function process(doc)
   local meta=doc.meta.academic or {}
   local front=pandoc.Blocks({})
-  local function value(key) return text(meta[key] or '') end
-  for _,key in ipairs({'university','department','work-type','discipline','group','supervisor','city','year'}) do
-    if value(key)=='' then error('Missing academic metadata: '..key) end
+  local function value(key)
+    if meta[key] then return text(meta[key]) end
+    if doc.meta[key] then return text(doc.meta[key]) end
+    return ''
   end
-  front:insert(styled(value('university'),'Institution'))
-  front:insert(styled(value('department'),'Institution'))
-  front:insert(styled(value('work-type'),'WorkType'))
-  front:insert(styled(text(doc.meta.title),'Title'))
-  front:insert(styled('По дисциплине «'..value('discipline')..'»','TitleDetails'))
-  local author=text(doc.meta.author)
-  front:insert(styled('Выполнил: '..author..', группа '..value('group'),'StudentDetails'))
-  front:insert(styled('Руководитель: '..value('supervisor'),'StudentDetails'))
-  front:insert(styled(value('city')..' — '..value('year'),'TitlePlace'))
-  front:insert(pagebreak())
-  if meta.annotation ~= false then
-    front:insert(styled('Аннотация','FrontMatterHeading'))
-    front:insert(pandoc.Para(text(doc.meta.title)..'. '..value('summary')))
-    front:insert(pandoc.Para({pandoc.Str('Объём работы: '),pandoc.RawInline('openxml',field('NUMPAGES')),pandoc.Str(' с.')}))
+
+  local profile = value('profile')
+  if profile == '' then profile = 'susu-coursework-v1' end
+
+  if profile == 'susu-coursework-v1' or profile == 'default' then
+    local ministry = value('ministry')
+    if ministry == '' then ministry = 'Министерство науки и высшего образования Российской Федерации' end
+
+    local university = value('university')
+    if university == '' then university = 'ФГАОУ ВО «ЮУрГУ (НИУ)»' end
+
+    local department = value('department')
+    local work_type = value('work-type')
+    if work_type == '' then work_type = 'КУРСОВАЯ РАБОТА' end
+
+    local discipline = value('discipline')
+    local group = value('group')
+    local supervisor = value('supervisor')
+    local city = value('city')
+    local year = value('year')
+
+    for key, val in pairs({department=department, discipline=discipline, group=group, supervisor=supervisor, city=city, year=year}) do
+      if val == '' then error('Missing academic metadata: ' .. key) end
+    end
+
+    front:insert(styled(ministry, 'Institution'))
+    front:insert(styled(university, 'Institution'))
+
+    local institute = value('institute')
+    if institute ~= '' then
+      front:insert(styled(institute, 'Institution'))
+    end
+
+    front:insert(styled(department, 'Institution'))
+    front:insert(styled(work_type, 'WorkType'))
+
+    local title = text(doc.meta.title)
+    front:insert(styled(title, 'Title'))
+    front:insert(styled('по дисциплине «' .. discipline .. '»', 'TitleDetails'))
+
+    local author = text(doc.meta.author)
+    front:insert(styled('Выполнил: студент группы ' .. group .. ' ' .. author, 'StudentDetails'))
+    front:insert(styled('Руководитель: ' .. supervisor, 'StudentDetails'))
+
+    local normocontroler = value('normocontroler')
+    if normocontroler ~= '' then
+      front:insert(styled('Нормоконтролер: ' .. normocontroler, 'StudentDetails'))
+    end
+
+    front:insert(styled(city .. ' — ' .. year, 'TitlePlace'))
+    front:insert(pagebreak())
+  end
+
+  if meta.annotation ~= false and value('summary') ~= '' then
+    front:insert(styled('Аннотация', 'FrontMatterHeading'))
+    front:insert(pandoc.Para(text(doc.meta.title) .. '. ' .. value('summary')))
+    front:insert(pandoc.Para({pandoc.Str('Объём работы: '), pandoc.RawInline('openxml', field('NUMPAGES')), pandoc.Str(' с.')}))
     front:insert(pagebreak())
   end
   doc.meta['academic-front-matter']=pandoc.MetaBlocks(front)

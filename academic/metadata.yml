@@ -1,10 +1,14 @@
 academic:
-  university: "Демонстрационный университет"
+  profile: "susu-coursework-v1"
+  ministry: "Министерство науки и высшего образования Российской Федерации"
+  university: "ФГАОУ ВО «ЮУрГУ (НИУ)»"
+  institute: "Высшая школа электроники и компьютерных наук"
   department: "Кафедра прикладных исследований"
   work-type: "Курсовая работа"
   discipline: "Математическое моделирование"
   group: "ММ-101"
   supervisor: "Петрова Анна Сергеевна"
+  normocontroler: "Сидоров В.В."
   city: "Челябинск"
   year: "2026"
   annotation: true
