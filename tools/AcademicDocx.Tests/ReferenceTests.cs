@@ -136,6 +136,60 @@ public sealed class ReferenceTests : IDisposable
         Assert.Equal(before, SHA256.HashData(File.ReadAllBytes(output)));
     }
 
+    [Fact]
+    public void ApplyEnsuresUpdateFieldsInSettingsAndValidatesSchema()
+    {
+        var output = Path.Combine(folder, "update-fields.docx");
+        ReferenceStyles.Apply(Source, output);
+        Assert.Empty(DocxInspection.Validate(output).Errors);
+        using var document = WordprocessingDocument.Open(output, false);
+        var main = document.MainDocumentPart!;
+        Assert.NotNull(main.DocumentSettingsPart);
+        Assert.NotNull(main.DocumentSettingsPart.Settings);
+        var updateFields = main.DocumentSettingsPart.Settings.GetFirstChild<W.UpdateFieldsOnOpen>();
+        Assert.NotNull(updateFields);
+        Assert.True(updateFields.Val?.Value ?? false);
+    }
+
+    [Fact]
+    public void ExtensionReferenceDocxHasUpdateFieldsInSettings()
+    {
+        var templatePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../academic/_extensions/academic/academic.docx"));
+        if (File.Exists(templatePath))
+        {
+            ReferenceStyles.Apply(templatePath, templatePath);
+            using var doc = WordprocessingDocument.Open(templatePath, false);
+            var updateFields = doc.MainDocumentPart?.DocumentSettingsPart?.Settings?.GetFirstChild<W.UpdateFieldsOnOpen>();
+            Assert.NotNull(updateFields);
+            Assert.True(updateFields.Val?.Value ?? false);
+        }
+    }
+
+    [Fact]
+    public void ApplyCreatesDocumentSettingsPartIfMissing()
+    {
+        var inputWithoutSettings = Path.Combine(folder, "no-settings.docx");
+        File.Copy(Source, inputWithoutSettings);
+        using (var doc = WordprocessingDocument.Open(inputWithoutSettings, true))
+        {
+            var main = doc.MainDocumentPart!;
+            if (main.DocumentSettingsPart != null)
+            {
+                main.DeletePart(main.DocumentSettingsPart);
+            }
+        }
+
+        var output = Path.Combine(folder, "settings-created.docx");
+        ReferenceStyles.Apply(inputWithoutSettings, output);
+        Assert.Empty(DocxInspection.Validate(output).Errors);
+        using var resultDoc = WordprocessingDocument.Open(output, false);
+        var settingsPart = resultDoc.MainDocumentPart?.DocumentSettingsPart;
+        Assert.NotNull(settingsPart);
+        var updateFields = settingsPart.Settings?.GetFirstChild<W.UpdateFieldsOnOpen>();
+        Assert.NotNull(updateFields);
+        Assert.True(updateFields.Val?.Value ?? false);
+    }
+
     private static SortedDictionary<string, XDocument> RelevantXml(string path)
     {
         using var zip = ZipFile.OpenRead(path);
