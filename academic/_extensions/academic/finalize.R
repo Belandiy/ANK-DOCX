@@ -162,6 +162,42 @@ for (output in outputs) {
       xml_add_child(sect, read_xml(paste0('<w:titlePg xmlns:w="', W, '"/>')))
     }
   }
+  # Ensure updateFields w:val="true" in word/settings.xml
+  settings_file <- file.path(folder, "word/settings.xml")
+  if (file.exists(settings_file)) {
+    settings_doc <- read_xml(settings_file)
+    update_fields <- xml_find_all(settings_doc, "//w:updateFields", ns)
+    if (length(update_fields) > 0) {
+      for (uf in update_fields) {
+        put(uf, "val", "true")
+      }
+    } else {
+      xml_add_child(settings_doc, node('<w:updateFields w:val="true"/>'))
+    }
+    write_xml(settings_doc, settings_file)
+  } else {
+    dir.create(file.path(folder, "word"), showWarnings = FALSE, recursive = TRUE)
+    settings_doc <- read_xml(paste0('<w:settings xmlns:w="', W, '"><w:updateFields w:val="true"/></w:settings>'))
+    write_xml(settings_doc, settings_file)
+    rels_file <- file.path(folder, "word/_rels/document.xml.rels")
+    if (file.exists(rels_file)) {
+      rels <- read_xml(rels_file)
+      settings_rel <- xml_find_all(rels, "//*[@Target='settings.xml' or @Target='/word/settings.xml' or @Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings']")
+      if (!length(settings_rel)) {
+        xml_add_child(rels, read_xml(paste0('<Relationship xmlns="', REL, '" Id="rIdSettings" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>')))
+        write_xml(rels, rels_file)
+      }
+    }
+    types_file <- file.path(folder, "[Content_Types].xml")
+    if (file.exists(types_file)) {
+      types <- read_xml(types_file)
+      settings_override <- xml_find_all(types, "//*[@PartName='/word/settings.xml']")
+      if (!length(settings_override)) {
+        xml_add_child(types, read_xml('<Override xmlns="http://schemas.openxmlformats.org/package/2006/content-types" PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>'))
+        write_xml(types, types_file)
+      }
+    }
+  }
   # Structural preflight: no missing REF targets or duplicate semantic bookmarks.
   names <- vapply(xml_find_all(doc,"//w:bookmarkStart",ns),attr,"",name="w:name")
   refs <- xml_text(xml_find_all(doc,"//w:instrText[starts-with(normalize-space(.),'REF ')]",ns))
