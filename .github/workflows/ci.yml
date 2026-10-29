@@ -51,3 +51,11 @@ jobs:
         run: |
           cd academic
           quarto render --to academic-docx --no-clean
+
+      - name: Validate Quarto Starter Template Creation and Render
+        env:
+          ACADEMIC_SKIP_WORD: "1"
+        run: |
+          quarto use template . my-starter-project --no-prompt
+          cd my-starter-project
+          quarto render --to academic-docx --no-clean

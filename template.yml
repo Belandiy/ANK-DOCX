@@ -1,0 +1,5 @@
+title: Academic DOCX Starter Template
+author: AutoNormoKontrol contributors
+version: 0.1.0
+quarto-required: ">=1.10.0"
+description: Quarto starter template for academic documents conforming to STO SUSU / GOST standards.

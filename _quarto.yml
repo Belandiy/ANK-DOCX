@@ -1,0 +1,34 @@
+project:
+  type: book
+  output-dir: _book
+  post-render:
+    - _extensions/academic/finalize.R
+
+book:
+  title: "Исследование свойств математических моделей"
+  author: "Иванов Иван Иванович"
+  output-file: coursework
+  chapters:
+    - index.qmd
+    - references.qmd
+
+format:
+  academic-docx: default
+
+engine: knitr
+lang: ru
+
+bibliography: references.bib
+csl: _extensions/academic/gost-r-7-0-5-2008-numeric.csl
+link-citations: true
+
+metadata-files: [metadata.yml]
+
+execute:
+  fig-width: 6.2
+  out-width: "95%"
+  echo: false
+  cache: false
+  freeze: false
+  error: false
+  warning: true

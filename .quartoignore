@@ -1,0 +1,11 @@
+docs/
+tools/
+archive/
+academic/
+build-academic.cmd
+setup-academic.cmd
+academic-docx.cmd
+dependencies.lock.json
+build/
+output/
+.tools/

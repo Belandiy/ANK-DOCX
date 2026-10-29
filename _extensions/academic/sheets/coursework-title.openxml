@@ -1,0 +1,18 @@
+<!-- СТО ЮУрГУ 04-2008 Приложение А: Титульный лист курсовой работы (susu-coursework-v1) -->
+<title-sheet profile="susu-coursework-v1">
+  <institution>
+    <ministry>$ministry$</ministry>
+    <university>$university$</university>
+    <institute>$institute$</institute>
+    <department>$department$</department>
+  </institution>
+  <work-type>$work-type$</work-type>
+  <discipline>по дисциплине «$discipline$»</discipline>
+  <title>$title$</title>
+  <student-details>
+    <author>Выполнил: студент группы $group$ $author$</author>
+    <supervisor>Руководитель: $supervisor$</supervisor>
+    <normocontroler>Нормоконтролер: $normocontroler$</normocontroler>
+  </student-details>
+  <title-place>$city$ — $year$</title-place>
+</title-sheet>
