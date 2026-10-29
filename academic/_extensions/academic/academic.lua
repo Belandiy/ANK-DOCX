@@ -5,10 +5,16 @@ local function bookmark(id) return id:gsub('[^%w_]','_') end
 local function field(code)
   return '<w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> '..esc(code)..' </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>'
 end
+local APPENDIX_LETTERS = {
+  "А", "Б", "В", "Г", "Д", "Е", "Ж", "И", "К", "Л", "М", "Н",
+  "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ш", "Щ", "Э", "Ю", "Я"
+}
+
 local bid=15000
-local function number(id,sequence,prefix,suffix)
+local function number(id,sequence,prefix,suffix,bm_prefix)
   bid=bid+1
-  return pandoc.RawInline('openxml','<w:r><w:t xml:space="preserve">'..esc(prefix)..'</w:t></w:r><w:bookmarkStart w:id="'..bid..'" w:name="'..bookmark(id)..'"/>'..field('SEQ '..sequence..' \\* ARABIC')..'<w:bookmarkEnd w:id="'..bid..'"/><w:r><w:t xml:space="preserve">'..esc(suffix)..'</w:t></w:r>')
+  bm_prefix = bm_prefix or ''
+  return pandoc.RawInline('openxml','<w:r><w:t xml:space="preserve">'..esc(prefix)..'</w:t></w:r><w:bookmarkStart w:id="'..bid..'" w:name="'..bookmark(id)..'"/><w:r><w:t xml:space="preserve">'..esc(bm_prefix)..'</w:t></w:r>'..field('SEQ '..sequence..' \\* ARABIC')..'<w:bookmarkEnd w:id="'..bid..'"/><w:r><w:t xml:space="preserve">'..esc(suffix)..'</w:t></w:r>')
 end
 local function pagebreak() return pandoc.RawBlock('openxml','<w:p><w:r><w:br w:type="page"/></w:r></w:p>') end
 local function styled(s,style)
@@ -87,11 +93,140 @@ local function process(doc)
   local out=assert(io.open('.quarto/academic-sources.json','wb'))
   out:write(pandoc.write(bibliography,'csljson'));out:close()
   local headings={}
-  doc:walk({Header=function(h)
-    if h.classes:includes('unnumbered') then
-      table.insert(headings,{id=h.identifier,unlisted=h.classes:includes('unlisted')})
+  local appendix_count = 0
+  local current_appendix_letter = nil
+
+  local function is_appendix(h)
+    if not h or h.t ~= 'Header' or h.level ~= 1 then return false end
+    if h.classes:includes('appendix') or h.classes:includes('appendices') then return true end
+    if h.attributes['appendix'] ~= nil then return true end
+    if h.identifier and (h.identifier:match('^appendix') or h.identifier:match('^sec%-appendix')) then return true end
+    return false
+  end
+
+  local function transform_block(block)
+    if block.t == 'Header' then
+      if is_appendix(block) then
+        appendix_count = appendix_count + 1
+        current_appendix_letter = APPENDIX_LETTERS[appendix_count] or string.format("A%d", appendix_count)
+        if not block.classes:includes('unnumbered') then
+          block.classes:insert('unnumbered')
+        end
+
+        local original_title = text(block)
+        if not original_title:match('^ПРИЛОЖЕНИЕ') and not original_title:match('^Приложение') then
+          local status = block.attributes['status'] or block.attributes['type']
+          local inlines = pandoc.Inlines({pandoc.Str('ПРИЛОЖЕНИЕ ' .. current_appendix_letter)})
+          if status and status ~= '' then
+            inlines:insert(pandoc.LineBreak())
+            inlines:insert(pandoc.Str('(' .. status .. ')'))
+          end
+          if original_title ~= '' then
+            inlines:insert(pandoc.LineBreak())
+            inlines:insert(pandoc.Str(original_title))
+          end
+          block.content = inlines
+        end
+
+        if block.classes:includes('unnumbered') then
+          table.insert(headings, {id=block.identifier, unlisted=block.classes:includes('unlisted')})
+        end
+        return {pagebreak(), block}
+      elseif block.level == 1 then
+        current_appendix_letter = nil
+      end
+
+      if block.classes:includes('unnumbered') then
+        table.insert(headings, {id=block.identifier, unlisted=block.classes:includes('unlisted')})
+      end
+      return block
+    elseif block.t == 'Para' or block.t == 'Plain' then
+      local id = text(block):match('{#(eq%-[%w-]+)}$')
+      if id then
+        for _, inline in ipairs(block.content) do
+          if inline.t == 'Math' then
+            if current_appendix_letter then
+              local seq_name = 'Formula_' .. current_appendix_letter
+              return pandoc.Blocks({
+                pandoc.Para({inline}),
+                pandoc.Para({number(id, seq_name, '(', ')', current_appendix_letter .. '.')})
+              })
+            else
+              return pandoc.Blocks({
+                pandoc.Para({inline}),
+                pandoc.Para({number(id, 'Формула', '(', ')')})
+              })
+            end
+          end
+        end
+      end
+      return block
+    elseif block.t == 'BulletList' or block.t == 'OrderedList' then
+      local new_items = {}
+      for _, item_blocks in ipairs(block.content) do
+        local new_item = pandoc.Blocks({})
+        for _, sub_b in ipairs(item_blocks) do
+          local res = transform_block(sub_b)
+          if res then
+            if res.t then new_item:insert(res)
+            else for _, b_el in ipairs(res) do new_item:insert(b_el) end
+            end
+          end
+        end
+        table.insert(new_items, new_item)
+      end
+      block.content = new_items
+      return block
+    elseif block.t == 'DefinitionList' then
+      local new_items = {}
+      for _, def_item in ipairs(block.content) do
+        local term = def_item[1]
+        local defs = def_item[2]
+        local new_defs = {}
+        for _, def_blocks in ipairs(defs) do
+          local new_def = pandoc.Blocks({})
+          for _, sub_b in ipairs(def_blocks) do
+            local res = transform_block(sub_b)
+            if res then
+              if res.t then new_def:insert(res)
+              else for _, b_el in ipairs(res) do new_def:insert(b_el) end
+              end
+            end
+          end
+          table.insert(new_defs, new_def)
+        end
+        table.insert(new_items, {term, new_defs})
+      end
+      block.content = new_items
+      return block
+    elseif (block.t == 'Div' or block.t == 'BlockQuote') and block.content then
+      local new_content = pandoc.Blocks({})
+      for _, sub_b in ipairs(block.content) do
+        local res = transform_block(sub_b)
+        if res then
+          if res.t then new_content:insert(res)
+          else for _, b_el in ipairs(res) do new_content:insert(b_el) end
+          end
+        end
+      end
+      block.content = new_content
+      return block
     end
-  end})
+    return block
+  end
+
+  local new_blocks = pandoc.Blocks({})
+  for _, b in ipairs(doc.blocks) do
+    local res = transform_block(b)
+    if res then
+      if res.t then new_blocks:insert(res)
+      else
+        for _, item in ipairs(res) do new_blocks:insert(item) end
+      end
+    end
+  end
+  doc.blocks = new_blocks
+
   out=assert(io.open('.quarto/academic-headings.json','wb'))
   out:write(quarto.json.encode(headings));out:close()
 
@@ -285,16 +420,6 @@ local function process(doc)
 
   return doc
 end
-local function para(p)
-  local id=text(p):match('{#(eq%-[%w-]+)}$')
-  if id then
-    for _,inline in ipairs(p.content) do
-      if inline.t=='Math' then
-        return {pandoc.Para({inline}),pandoc.Para({number(id,'Формула','(',')')})}
-      end
-    end
-  end
-end
 local function cite(c)
   local is_crossref = false
   for _, citation in ipairs(c.citations) do
@@ -318,4 +443,4 @@ local function cite(c)
   end
   return nil
 end
-return {{Pandoc=process},{Para=para},{Cite=cite}}
+return {{Pandoc=process},{Cite=cite}}
