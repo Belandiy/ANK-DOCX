@@ -202,11 +202,6 @@ public static class ReferenceStyles
             Set(footerProperties, new W.Justification { Val = W.JustificationValues.Center });
             p.Append(new W.SimpleField(new W.Run(new W.Text("1"))) { Instruction = "PAGE" });
         }
-        var settingsPart = main.DocumentSettingsPart ?? main.AddNewPart<DocumentSettingsPart>();
-        var settings = settingsPart.Settings ??= new W.Settings();
-        Set(settings, new W.UpdateFieldsOnOpen { Val = true });
-        settings.Save();
-
         main.Document.Save();
         styles.Save();
         numbering.Save();
