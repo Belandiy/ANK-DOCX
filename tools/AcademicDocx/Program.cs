@@ -65,6 +65,8 @@ internal static class Program
                     if (Option(args, "--report") is { } reportPath) RequireDistinctPaths(args[1], reportPath);
                     var report = WordFinalizer.Run(args[1]);
                     if (Option(args, "--report") is { } output) JsonReport.Write(output, report);
+                    var diagReport = new DiagnosticReport(report.Diagnostics);
+                    Console.Error.Write(diagReport.FormatConsoleSummary());
                     Console.Write(JsonReport.Serialize(report));
                     return report.Passed ? 0 : 1;
                 }
