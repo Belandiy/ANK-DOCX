@@ -61,26 +61,56 @@ for (output in outputs) {
   next_id <- max(c(0, as.integer(vapply(bookmarks, attr, "", name = "w:id"))), na.rm = TRUE) + 1
   for (bookmark in bookmarks) {
     name <- attr(bookmark, "w:name")
-    if (!grepl("^(sec|fig|tbl|eq)-", name)) next
+    if (!grepl("^(sec|fig|tbl|eq|lst)-", name)) next
     normalized <- gsub("[^A-Za-z0-9_]", "_", name)
     put(bookmark, "name", normalized)
-    if (!grepl("^(fig|tbl)-", name)) next
-    label <- if (startsWith(name, "fig-")) "Рисунок" else "Таблица"
+    if (!grepl("^(fig|tbl|lst)-", name)) next
+    label <- if (startsWith(name, "fig-")) "Рисунок" else if (startsWith(name, "tbl-")) "Таблица" else "Листинг"
     candidates <- xml_find_all(bookmark, "following::w:p", ns)
     captions <- candidates[startsWith(vapply(candidates, text, ""), label)]
     if (!length(captions)) stop("Missing caption for ", name)
     caption <- captions[[1]]
     caption_text <- sub(paste0("^", label, "[[:space:]\u00a0]+[0-9.]+[[:space:]\u00a0]*[—–:.-]?[[:space:]]*"), "", text(caption), perl = TRUE)
     if (!nzchar(caption_text)) stop("Empty caption for ", name)
+
+    # Check if object is inside an appendix section (matching only heading paragraphs)
+    preceding_headings <- xml_find_all(bookmark, "preceding::w:p[w:pPr/w:pStyle[@w:val='UnnumberedHeading' or @w:val='Heading1'] or starts-with(w:pPr/w:pStyle/@w:val, 'Heading')]", ns)
+    app_letter <- NULL
+    if (length(preceding_headings)) {
+      h_texts <- vapply(preceding_headings, text, "")
+      app_indices <- grep("^ПРИЛОЖЕНИЕ\\s+", h_texts, ignore.case = TRUE)
+      if (length(app_indices)) {
+        last_app_text <- h_texts[app_indices[length(app_indices)]]
+        m <- regmatches(last_app_text, regexpr("^ПРИЛОЖЕНИЕ\\s+([А-ЯA-Z0-9]+)", last_app_text, ignore.case = TRUE))
+        if (length(m)) {
+          app_letter <- sub("^ПРИЛОЖЕНИЕ\\s+", "", m, ignore.case = TRUE)
+          app_letter <- strsplit(app_letter, "[\r\n\t ]+")[[1]][[1]]
+        }
+      }
+    }
+
     old_id <- attr(bookmark, "w:id")
     xml_remove(xml_find_all(doc, paste0("//w:bookmarkEnd[@w:id='", old_id, "']"), ns))
     xml_remove(bookmark)
     xml_remove(xml_find_all(caption, "./*[not(self::w:pPr)]", ns))
-    xml_add_child(caption, node(run(paste0(label, " "))))
-    xml_add_child(caption, node(paste0('<w:bookmarkStart w:id="', next_id, '" w:name="', normalized, '"/>')))
-    for (part in xml_children(read_xml(paste0('<root xmlns:w="', W, '">', field(paste0("SEQ ", label, " \\* ARABIC")), '</root>')))) xml_add_child(caption, part)
-    xml_add_child(caption, node(paste0('<w:bookmarkEnd w:id="', next_id, '"/>')))
-    xml_add_child(caption, node(run(paste0(" — ", caption_text))))
+
+    if (!is.null(app_letter) && nzchar(app_letter)) {
+      base_seq <- if (startsWith(name, "fig-")) "Figure" else if (startsWith(name, "tbl-")) "Table" else "Listing"
+      seq_code <- paste0("SEQ ", base_seq, "_", app_letter, " \\* ARABIC")
+      xml_add_child(caption, node(run(paste0(label, " "))))
+      xml_add_child(caption, node(paste0('<w:bookmarkStart w:id="', next_id, '" w:name="', normalized, '"/>')))
+      xml_add_child(caption, node(run(paste0(app_letter, "."))))
+      for (part in xml_children(read_xml(paste0('<root xmlns:w="', W, '">', field(seq_code), '</root>')))) xml_add_child(caption, part)
+      xml_add_child(caption, node(paste0('<w:bookmarkEnd w:id="', next_id, '"/>')))
+      xml_add_child(caption, node(run(paste0(" — ", caption_text))))
+    } else {
+      seq_code <- paste0("SEQ ", label, " \\* ARABIC")
+      xml_add_child(caption, node(run(paste0(label, " "))))
+      xml_add_child(caption, node(paste0('<w:bookmarkStart w:id="', next_id, '" w:name="', normalized, '"/>')))
+      for (part in xml_children(read_xml(paste0('<root xmlns:w="', W, '">', field(seq_code), '</root>')))) xml_add_child(caption, part)
+      xml_add_child(caption, node(paste0('<w:bookmarkEnd w:id="', next_id, '"/>')))
+      xml_add_child(caption, node(run(paste0(" — ", caption_text))))
+    }
     next_id <- next_id + 1
   }
   # A numbered equation stays editable; attach its field to the same paragraph.
@@ -100,7 +130,7 @@ for (output in outputs) {
     if (inherits(pr,"xml_missing")) pr <- xml_add_child(p,node("<w:pPr/>"),.where=0)
     if (!length(xml_find_all(pr,"./w:keepNext",ns))) xml_add_child(pr,node("<w:keepNext/>"))
   }
-  numbers <- xml_find_all(doc, "//w:p[w:r/w:instrText[contains(.,'SEQ Формула')]]", ns)
+  numbers <- xml_find_all(doc, "//w:p[w:r/w:instrText[contains(.,'SEQ Формула') or contains(.,'SEQ Formula')]]", ns)
   section <- xml_find_first(doc, "//w:sectPr[last()]", ns)
   page_size <- xml_find_first(section, "./w:pgSz", ns)
   margins <- xml_find_first(section, "./w:pgMar", ns)
