@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using AcademicDocx.Core;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
@@ -121,6 +120,12 @@ public sealed class ExplicationTests : IDisposable
             // Table indent must be 709 dxa (1.25 cm)
             Assert.Equal(709, tblPr!.TableIndentation!.Width!.Value);
 
+            // Table grid columns
+            var gridCols = tbl.GetFirstChild<W.TableGrid>()!.Elements<W.GridColumn>().ToList();
+            Assert.Equal(2, gridCols.Count);
+            Assert.Equal("1701", gridCols[0].Width!.Value);
+            Assert.Equal("7512", gridCols[1].Width!.Value);
+
             // Table borders must be borderless (none)
             var borders = tblPr.TableBorders;
             Assert.NotNull(borders);
@@ -151,6 +156,194 @@ public sealed class ExplicationTests : IDisposable
             var cell22Text = row2Cells[1].InnerText;
             Assert.StartsWith("—", cell22Text);
             Assert.EndsWith(".", cell22Text);
+        }
+    }
+
+    [Fact]
+    public void ExplicationWithSubscriptSuperscriptAndItalicsGeneratesVertAlignAndItalicRuns()
+    {
+        var path = Path.Combine(folder, "explication_indices.docx");
+
+        using (var package = WordprocessingDocument.Create(path, WordprocessingDocumentType.Document))
+        {
+            var main = package.AddMainDocumentPart();
+
+            var table = new W.Table(
+                new W.TableProperties(
+                    new W.TableStyle { Val = "TableGrid" },
+                    new W.TableWidth { Width = "0", Type = W.TableWidthUnitValues.Auto },
+                    new W.TableIndentation { Width = 709, Type = W.TableWidthUnitValues.Dxa },
+                    new W.TableBorders(
+                        new W.TopBorder { Val = W.BorderValues.None },
+                        new W.LeftBorder { Val = W.BorderValues.None },
+                        new W.BottomBorder { Val = W.BorderValues.None },
+                        new W.RightBorder { Val = W.BorderValues.None },
+                        new W.InsideHorizontalBorder { Val = W.BorderValues.None },
+                        new W.InsideVerticalBorder { Val = W.BorderValues.None }
+                    )
+                ),
+                new W.TableGrid(
+                    new W.GridColumn { Width = "1701" },
+                    new W.GridColumn { Width = "7512" }
+                ),
+                // Row 1: symbol with subscript x_i and italic variable
+                new W.TableRow(
+                    new W.TableRowProperties(new W.CantSplit()),
+                    new W.TableCell(
+                        new W.Paragraph(
+                            new W.ParagraphProperties(new W.ParagraphStyleId { Val = "FormulaDefinitions" }),
+                            new W.Run(new W.Text("где ")),
+                            new W.Run(new W.RunProperties(new W.Italic()), new W.Text("x")),
+                            new W.Run(
+                                new W.RunProperties(
+                                    new W.Italic(),
+                                    new W.VerticalTextAlignment { Val = W.VerticalPositionValues.Subscript }
+                                ),
+                                new W.Text("i")
+                            )
+                        )
+                    ),
+                    new W.TableCell(
+                        new W.Paragraph(
+                            new W.ParagraphProperties(new W.ParagraphStyleId { Val = "FormulaDefinitions" }),
+                            new W.Run(new W.Text("— i-й элемент выборки;"))
+                        )
+                    )
+                ),
+                // Row 2: symbol with superscript y^2
+                new W.TableRow(
+                    new W.TableRowProperties(new W.CantSplit()),
+                    new W.TableCell(
+                        new W.Paragraph(
+                            new W.ParagraphProperties(new W.ParagraphStyleId { Val = "FormulaDefinitions" }),
+                            new W.Run(new W.RunProperties(new W.Italic()), new W.Text("y")),
+                            new W.Run(
+                                new W.RunProperties(
+                                    new W.VerticalTextAlignment { Val = W.VerticalPositionValues.Superscript }
+                                ),
+                                new W.Text("2")
+                            )
+                        )
+                    ),
+                    new W.TableCell(
+                        new W.Paragraph(
+                            new W.ParagraphProperties(new W.ParagraphStyleId { Val = "FormulaDefinitions" }),
+                            new W.Run(new W.Text("— квадрат целевого значения."))
+                        )
+                    )
+                )
+            );
+
+            main.Document = new W.Document(new W.Body(table));
+        }
+
+        // Schema validation
+        var validation = DocxInspection.Validate(path);
+        Assert.Equal(0, validation.ErrorCount);
+
+        // XML structure verification
+        using (var doc = WordprocessingDocument.Open(path, false))
+        {
+            var mainDoc = doc.MainDocumentPart!.Document;
+            var table = mainDoc.Body!.Elements<W.Table>().Single();
+            var runs = table.Descendants<W.Run>().ToList();
+
+            // Subscript check
+            var subRun = runs.FirstOrDefault(r => r.RunProperties?.VerticalTextAlignment?.Val?.Value == W.VerticalPositionValues.Subscript);
+            Assert.NotNull(subRun);
+            Assert.Equal("i", subRun!.InnerText);
+
+            // Superscript check
+            var superRun = runs.FirstOrDefault(r => r.RunProperties?.VerticalTextAlignment?.Val?.Value == W.VerticalPositionValues.Superscript);
+            Assert.NotNull(superRun);
+            Assert.Equal("2", superRun!.InnerText);
+
+            // Italic check
+            var italicRun = runs.FirstOrDefault(r => r.RunProperties?.Italic is not null);
+            Assert.NotNull(italicRun);
+        }
+    }
+
+    [Fact]
+    public void ExplicationWithMoreThanTwoRowsValidatesPunctuation()
+    {
+        var path = Path.Combine(folder, "explication_multi_row.docx");
+
+        using (var package = WordprocessingDocument.Create(path, WordprocessingDocumentType.Document))
+        {
+            var main = package.AddMainDocumentPart();
+
+            static W.TableRow CreateExplicationRow(string symbolPrefix, string desc, bool isLast)
+            {
+                var punctuation = isLast ? "." : ";";
+                return new W.TableRow(
+                    new W.TableRowProperties(new W.CantSplit()),
+                    new W.TableCell(
+                        new W.TableCellProperties(new W.TableCellWidth { Width = "1701", Type = W.TableWidthUnitValues.Dxa }),
+                        new W.Paragraph(
+                            new W.ParagraphProperties(new W.ParagraphStyleId { Val = "FormulaDefinitions" }),
+                            new W.Run(new W.Text(symbolPrefix))
+                        )
+                    ),
+                    new W.TableCell(
+                        new W.TableCellProperties(new W.TableCellWidth { Width = "7512", Type = W.TableWidthUnitValues.Dxa }),
+                        new W.Paragraph(
+                            new W.ParagraphProperties(new W.ParagraphStyleId { Val = "FormulaDefinitions" }),
+                            new W.Run(new W.Text($"— {desc}{punctuation}"))
+                        )
+                    )
+                );
+            }
+
+            var table = new W.Table(
+                new W.TableProperties(
+                    new W.TableStyle { Val = "TableGrid" },
+                    new W.TableWidth { Width = "0", Type = W.TableWidthUnitValues.Auto },
+                    new W.TableIndentation { Width = 709, Type = W.TableWidthUnitValues.Dxa },
+                    new W.TableBorders(
+                        new W.TopBorder { Val = W.BorderValues.None },
+                        new W.LeftBorder { Val = W.BorderValues.None },
+                        new W.BottomBorder { Val = W.BorderValues.None },
+                        new W.RightBorder { Val = W.BorderValues.None },
+                        new W.InsideHorizontalBorder { Val = W.BorderValues.None },
+                        new W.InsideVerticalBorder { Val = W.BorderValues.None }
+                    )
+                ),
+                new W.TableGrid(
+                    new W.GridColumn { Width = "1701" },
+                    new W.GridColumn { Width = "7512" }
+                ),
+                CreateExplicationRow("где A", "первая переменная", isLast: false),
+                CreateExplicationRow("B", "вторая переменная", isLast: false),
+                CreateExplicationRow("C", "третья переменная", isLast: false),
+                CreateExplicationRow("D", "четвертая переменная", isLast: true)
+            );
+
+            main.Document = new W.Document(new W.Body(table));
+        }
+
+        // Schema validation
+        var validation = DocxInspection.Validate(path);
+        Assert.Equal(0, validation.ErrorCount);
+
+        // Verification of multi-row punctuation
+        using (var doc = WordprocessingDocument.Open(path, false))
+        {
+            var table = doc.MainDocumentPart!.Document.Body!.Elements<W.Table>().Single();
+            var rows = table.Elements<W.TableRow>().ToList();
+
+            Assert.Equal(4, rows.Count);
+
+            // Rows 0, 1, 2 must end with semicolon ';'
+            for (var i = 0; i < 3; i++)
+            {
+                var text = rows[i].Elements<W.TableCell>().Last().InnerText.Trim();
+                Assert.EndsWith(";", text);
+            }
+
+            // Row 3 (last) must end with period '.'
+            var lastText = rows[3].Elements<W.TableCell>().Last().InnerText.Trim();
+            Assert.EndsWith(".", lastText);
         }
     }
 

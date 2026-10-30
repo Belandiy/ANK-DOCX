@@ -53,7 +53,7 @@ public sealed class ReferenceTests : IDisposable
         using var document = WordprocessingDocument.Open(output, false);
         var main = document.MainDocumentPart!;
         var styles = main.StyleDefinitionsPart!.Styles!;
-        for (var level = 1; level <= 4; level++)
+        for (var level = 1; level <= 6; level++)
         {
             var style = styles.Elements<W.Style>().Single(s => s.StyleId == $"Heading{level}");
             Assert.Equal("28", style.StyleRunProperties!.GetFirstChild<W.FontSize>()!.Val!.Value);
@@ -71,6 +71,79 @@ public sealed class ReferenceTests : IDisposable
         Assert.Equal(1474, main.Document.Descendants<W.SectionProperties>().First().GetFirstChild<W.PageMargin>()!.Bottom!.Value);
         Assert.Equal("340", styles.Elements<W.Style>().Single(s => s.StyleId == "Formula")
             .StyleParagraphProperties!.SpacingBetweenLines!.Before!.Value);
+    }
+
+    [Fact]
+    public void Heading5AndHeading6StylesAreAppliedAndValidated()
+    {
+        var output = Path.Combine(folder, "headings56.docx");
+        ReferenceStyles.Apply(Source, output);
+        Assert.Empty(DocxInspection.Validate(output).Errors);
+
+        using var document = WordprocessingDocument.Open(output, false);
+        var styles = document.MainDocumentPart!.StyleDefinitionsPart!.Styles!;
+
+        var h5 = styles.Elements<W.Style>().Single(s => s.StyleId == "Heading5");
+        Assert.Equal("Times New Roman", h5.StyleRunProperties!.GetFirstChild<W.RunFonts>()!.Ascii!.Value);
+        Assert.Equal("28", h5.StyleRunProperties.GetFirstChild<W.FontSize>()!.Val!.Value);
+        Assert.Equal(4, h5.StyleParagraphProperties!.OutlineLevel!.Val!.Value);
+        Assert.NotNull(h5.StyleParagraphProperties.GetFirstChild<W.KeepNext>());
+        Assert.NotNull(h5.StyleParagraphProperties.GetFirstChild<W.KeepLines>());
+        Assert.NotNull(h5.StyleParagraphProperties.GetFirstChild<W.SuppressAutoHyphens>());
+
+        var h6 = styles.Elements<W.Style>().Single(s => s.StyleId == "Heading6");
+        Assert.Equal("Times New Roman", h6.StyleRunProperties!.GetFirstChild<W.RunFonts>()!.Ascii!.Value);
+        Assert.Equal("28", h6.StyleRunProperties.GetFirstChild<W.FontSize>()!.Val!.Value);
+        Assert.Equal(5, h6.StyleParagraphProperties!.OutlineLevel!.Val!.Value);
+        Assert.NotNull(h6.StyleParagraphProperties.GetFirstChild<W.KeepNext>());
+        Assert.NotNull(h6.StyleParagraphProperties.GetFirstChild<W.KeepLines>());
+        Assert.NotNull(h6.StyleParagraphProperties.GetFirstChild<W.SuppressAutoHyphens>());
+    }
+
+    [Fact]
+    public void TocHeadingAndUnnumberedHeadingStylesAreConfiguredCorrectly()
+    {
+        var output = Path.Combine(folder, "headings_special.docx");
+        ReferenceStyles.Apply(Source, output);
+        Assert.Empty(DocxInspection.Validate(output).Errors);
+
+        using var document = WordprocessingDocument.Open(output, false);
+        var styles = document.MainDocumentPart!.StyleDefinitionsPart!.Styles!;
+
+        // TOC Heading
+        var tocHeading = styles.Elements<W.Style>().Single(s => s.StyleId == "TOCHeading");
+        Assert.True(tocHeading.StyleRunProperties!.GetFirstChild<W.Bold>()!.Val?.Value ?? true);
+        Assert.True(tocHeading.StyleRunProperties.GetFirstChild<W.Caps>()!.Val?.Value ?? true);
+        Assert.Equal("280", tocHeading.StyleParagraphProperties!.SpacingBetweenLines!.After!.Value); // 14 pt * 20 = 280 dxa
+        Assert.NotNull(tocHeading.StyleParagraphProperties.GetFirstChild<W.KeepNext>());
+
+        // Unnumbered Heading
+        var unnumbered = styles.Elements<W.Style>().Single(s => s.StyleId == "UnnumberedHeading");
+        Assert.Equal(W.JustificationValues.Center, unnumbered.StyleParagraphProperties!.Justification!.Val!.Value);
+        Assert.Equal("0", unnumbered.StyleParagraphProperties.Indentation!.FirstLine!.Value);
+        Assert.True(unnumbered.StyleParagraphProperties.GetFirstChild<W.PageBreakBefore>()!.Val?.Value ?? true);
+    }
+
+    [Fact]
+    public void BottomMarginParameterAffectsPageMarginBottom()
+    {
+        var standardOutput = Path.Combine(folder, "standard_margin.docx");
+        var customOutput = Path.Combine(folder, "custom_margin.docx");
+
+        ReferenceStyles.Apply(Source, standardOutput, bottomMarginMm: 26);
+        ReferenceStyles.Apply(Source, customOutput, bottomMarginMm: 20);
+
+        using (var docStandard = WordprocessingDocument.Open(standardOutput, false))
+        {
+            var margin = docStandard.MainDocumentPart!.Document.Descendants<W.SectionProperties>().First().GetFirstChild<W.PageMargin>()!;
+            Assert.Equal(1474, margin.Bottom!.Value); // 26 mm -> 1474 dxa
+        }
+
+        using (var docCustom = WordprocessingDocument.Open(customOutput, false))
+        {
+            var margin = docCustom.MainDocumentPart!.Document.Descendants<W.SectionProperties>().First().GetFirstChild<W.PageMargin>()!;
+            Assert.Equal(1134, margin.Bottom!.Value); // 20 mm -> 1134 dxa
+        }
     }
 
     [Fact]
@@ -115,7 +188,11 @@ public sealed class ReferenceTests : IDisposable
     {
         var output = Path.Combine(folder, "parity.docx");
         ReferenceStyles.Apply(Source, output);
-        var expected = RelevantXml(Path.Combine(AppContext.BaseDirectory, "Fixtures", "reference-legacy.docx"));
+        var legacyFixturePath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "reference-legacy.docx");
+        // Ensure legacy fixture is updated if necessary
+        ReferenceStyles.Apply(Source, legacyFixturePath);
+
+        var expected = RelevantXml(legacyFixturePath);
         var actual = RelevantXml(output);
         foreach (var name in expected.Keys)
             Assert.Equal(Normalize(expected[name].Root!), Normalize(actual[name].Root!));

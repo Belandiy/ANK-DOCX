@@ -144,7 +144,9 @@ public static class DocxInspection
         var shape = rows.Take(headerRows).SelectMany(row => row.Elements<W.TableCell>()).Select(cell =>
         {
             var props = cell.TableCellProperties;
-            return $"{props?.GridSpan?.Val?.Value ?? 1}:{props?.VerticalMerge?.Val?.Value.ToString() ?? (props?.VerticalMerge is null ? "none" : "continue")}";
+            var vMergeStr = props?.VerticalMerge?.Val?.InnerText
+                ?? (props?.VerticalMerge?.Val?.HasValue == true ? props.VerticalMerge.Val.Value.ToString().ToLowerInvariant() : (props?.VerticalMerge is null ? "none" : "continue"));
+            return $"{props?.GridSpan?.Val?.Value ?? 1}:{vMergeStr}";
         }).ToArray();
         return new(rows.Select(row => row.Elements<W.TableCell>().Select(cell => cell.InnerText).ToArray()).ToArray(),
             headerRows, shape, table.Descendants<M.OfficeMath>().Count(),

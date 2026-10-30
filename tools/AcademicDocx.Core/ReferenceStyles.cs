@@ -105,7 +105,7 @@ public static class ReferenceStyles
         Style("Compact", W.JustificationValues.Left, indent: 0);
         Style("Formula", W.JustificationValues.Left, indent: 0, before: 17, after: 17, keepLines: true);
         Style("Formula Definitions", W.JustificationValues.Left, indent: 0, keepLines: true);
-        for (var level = 1; level <= 4; level++)
+        for (var level = 1; level <= 6; level++)
         {
             var heading = Style($"Heading {level}", W.JustificationValues.Left,
                 before: level <= 2 ? 14 : 7, after: level == 1 ? 14 : 7,
@@ -144,7 +144,7 @@ public static class ReferenceStyles
         else instance = numbering.Elements<W.NumberingInstance>().First(num => num.AbstractNumId?.Val == headings.AbstractNumberId);
         headings.RemoveAllChildren();
         headings.AddChild(new W.MultiLevelType { Val = W.MultiLevelValues.Multilevel }, true);
-        for (var level = 0; level < 4; level++)
+        for (var level = 0; level < 6; level++)
         {
             var rp = new W.NumberingSymbolRunProperties();
             Font(rp);
