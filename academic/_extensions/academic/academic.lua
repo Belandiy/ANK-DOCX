@@ -156,7 +156,7 @@ local function clean_exp_inlines(exp, is_last_row)
         stripped_dash = true
         table.insert(res, pandoc.Str(s))
       end
-    elseif not stripped_dash and inline.t == 'Space' do
+    elseif not stripped_dash and inline.t == 'Space' then
       -- skip leading spaces
     else
       stripped_dash = true
@@ -579,6 +579,9 @@ local function process(doc)
       end,
       Figure = function(fig)
         if fig.identifier and fig.identifier:match('^' .. prefix) then found_id = fig.identifier end
+      end,
+      CodeBlock = function(cb)
+        if cb.identifier and cb.identifier:match('^' .. prefix) then found_id = cb.identifier end
       end
     })
     return found_id
@@ -598,7 +601,7 @@ local function process(doc)
     pandoc.walk_block(para_block, {
       Cite = function(c)
         for _, citation in ipairs(c.citations) do
-          if citation.id == obj_id or citation.id == obj_id:gsub('^fig%-', ''):gsub('^tbl%-', '') then
+          if citation.id == obj_id or citation.id == obj_id:gsub('^fig%-', ''):gsub('^tbl%-', ''):gsub('^lst%-', '') then
             found = true
           end
         end
@@ -671,6 +674,24 @@ local function process(doc)
         end
       end
 
+      local lst_id = get_object_id(b, 'lst-')
+      if lst_id and not seen_objects[lst_id] then
+        seen_objects[lst_id] = true
+        if not check_ref(last_text_para, lst_id) then
+          add_diagnostic(
+            'LST_REF_MISSING',
+            'Warning',
+            input_file,
+            current_section_id,
+            current_section_title,
+            lst_id,
+            'объект #' .. lst_id,
+            'Перед листингом #' .. lst_id .. ' в предшествующем абзаце отсутствует ссылка @' .. lst_id .. '.',
+            'Добавьте во вступительный абзац перед листингом текстовую ссылку на листинг (@' .. lst_id .. ').'
+          )
+        end
+      end
+
       local tbl_id = get_object_id(b, 'tbl-')
       if tbl_id and not seen_objects[tbl_id] then
         seen_objects[tbl_id] = true
@@ -726,7 +747,7 @@ local function cite(c)
 
   if is_crossref then
     if #c.citations > 1 then
-      error('Grouped cross-references (fig, tbl, eq, sec) are not yet supported; use individual cross-references.')
+      error('Grouped cross-references (fig, tbl, eq, sec, lst) are not yet supported; use individual cross-references.')
     end
     local id = c.citations[1].id
     local reference = field('REF ' .. bookmark(id) .. (id:match('^sec%-') and ' \\n' or '') .. ' \\h')
