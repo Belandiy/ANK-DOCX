@@ -156,7 +156,7 @@ local function clean_exp_inlines(exp, is_last_row)
         stripped_dash = true
         table.insert(res, pandoc.Str(s))
       end
-    elseif not stripped_dash and inline.t == 'Space' do
+    elseif not stripped_dash and inline.t == 'Space' then
       -- skip leading spaces
     else
       stripped_dash = true

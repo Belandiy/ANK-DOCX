@@ -18,20 +18,20 @@ public static class ReferenceStyles
         return child;
     }
 
-    private static void Font(OpenXmlCompositeElement properties)
+    private static void Font(OpenXmlCompositeElement properties, string fontName = "Times New Roman", string fontSize = "28")
     {
         var fonts = properties.GetFirstChild<W.RunFonts>() ?? new W.RunFonts();
         fonts.AsciiTheme = null;
         fonts.HighAnsiTheme = null;
         fonts.EastAsiaTheme = null;
         fonts.ComplexScriptTheme = null;
-        fonts.Ascii = fonts.HighAnsi = fonts.EastAsia = fonts.ComplexScript = "Times New Roman";
+        fonts.Ascii = fonts.HighAnsi = fonts.EastAsia = fonts.ComplexScript = fontName;
         Set(properties, fonts);
         var color = properties.GetFirstChild<W.Color>() ?? new W.Color();
         color.Val = "000000";
         Set(properties, color);
-        Set(properties, new W.FontSize { Val = "28" });
-        Set(properties, new W.FontSizeComplexScript { Val = "28" });
+        Set(properties, new W.FontSize { Val = fontSize });
+        Set(properties, new W.FontSizeComplexScript { Val = fontSize });
         var language = properties.GetFirstChild<W.Languages>() ?? new W.Languages();
         language.Val = "ru-RU";
         Set(properties, language);
@@ -66,7 +66,8 @@ public static class ReferenceStyles
         W.Style Style(string name, W.JustificationValues? align = null, double indent = 7,
             int before = 0, int after = 0, bool bold = false, bool italic = false,
             bool caps = false, bool keepNext = false, bool keepLines = false,
-            bool newPage = false, int? outline = null)
+            bool newPage = false, int? outline = null, string fontName = "Times New Roman",
+            string fontSize = "28")
         {
             var id = name.Replace(" ", "", StringComparison.Ordinal);
             var style = styles.Elements<W.Style>().FirstOrDefault(s =>
@@ -78,11 +79,12 @@ public static class ReferenceStyles
             }
             if (name != "Normal") Set(style, new W.BasedOn { Val = "Normal" });
             var rp = style.StyleRunProperties ??= new W.StyleRunProperties();
-            Font(rp);
+            Font(rp, fontName, fontSize);
             Set(rp, new W.Bold { Val = bold });
             Set(rp, new W.Italic { Val = italic });
             Set(rp, new W.Caps { Val = caps });
             var pp = style.StyleParagraphProperties ??= new W.StyleParagraphProperties();
+            pp.RemoveAllChildren<W.ParagraphBorders>();
             Set(pp, new W.Justification { Val = align ?? W.JustificationValues.Both });
             Set(pp, new W.Indentation { FirstLine = Twips(indent), Left = "0", Right = "0" });
             Set(pp, new W.SpacingBetweenLines { Before = (before * 20).ToString(CultureInfo.InvariantCulture), After = (after * 20).ToString(CultureInfo.InvariantCulture), Line = "240", LineRule = W.LineSpacingRuleValues.Auto });
@@ -94,7 +96,7 @@ public static class ReferenceStyles
             if (style.LinkedStyle?.Val is { } linkedId)
             {
                 var linked = styles.Elements<W.Style>().FirstOrDefault(s => s.StyleId == linkedId);
-                if (linked is not null) Font(linked.StyleRunProperties ??= new W.StyleRunProperties());
+                if (linked is not null) Font(linked.StyleRunProperties ??= new W.StyleRunProperties(), fontName, fontSize);
             }
             return style;
         }
@@ -158,9 +160,11 @@ public static class ReferenceStyles
             var heading = styles.Elements<W.Style>().First(s => s.StyleId == $"Heading{level + 1}");
             Set(heading.StyleParagraphProperties!, new W.NumberingProperties(new W.NumberingLevelReference { Val = level }, new W.NumberingId { Val = instance.NumberID!.Value }));
         }
-        foreach (var name in new[] { "Caption", "Image Caption", "Table Caption", "Figure", "Captioned Figure" })
-            Style(name, name == "Table Caption" ? W.JustificationValues.Left : W.JustificationValues.Center,
-                indent: 0, keepNext: name is "Table Caption" or "Figure" or "Captioned Figure", keepLines: true);
+        foreach (var name in new[] { "Caption", "Image Caption", "Table Caption", "Listing Caption", "Figure", "Captioned Figure" })
+            Style(name, name is "Table Caption" or "Listing Caption" ? W.JustificationValues.Left : W.JustificationValues.Center,
+                indent: 0, keepNext: name is "Table Caption" or "Listing Caption" or "Figure" or "Captioned Figure", keepLines: true);
+        Style("Source Code", W.JustificationValues.Left, indent: 0, fontName: "Courier New", fontSize: "24");
+        Style("Code", W.JustificationValues.Left, indent: 0, fontName: "Courier New", fontSize: "24");
         Style("TOC Heading", W.JustificationValues.Center, indent: 0, bold: true, caps: true, after: 14, keepNext: true, keepLines: true);
         var defaults = styles.DocDefaults ??= new W.DocDefaults();
         var runDefaults = defaults.RunPropertiesDefault ??= new W.RunPropertiesDefault();
@@ -202,6 +206,11 @@ public static class ReferenceStyles
             Set(footerProperties, new W.Justification { Val = W.JustificationValues.Center });
             p.Append(new W.SimpleField(new W.Run(new W.Text("1"))) { Instruction = "PAGE" });
         }
+        var settingsPart = main.DocumentSettingsPart ?? main.AddNewPart<DocumentSettingsPart>();
+        var settings = settingsPart.Settings ??= new W.Settings();
+        Set(settings, new W.UpdateFieldsOnOpen { Val = true });
+        settings.Save();
+
         main.Document.Save();
         styles.Save();
         numbering.Save();
