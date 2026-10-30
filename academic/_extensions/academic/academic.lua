@@ -597,6 +597,44 @@ local function process(doc)
   out=assert(io.open('.quarto/academic-headings.json','wb'))
   out:write(quarto.json.encode(headings));out:close()
 
+  local assignment_export = nil
+  if meta.assignment then
+    local deadline = meta.assignment.deadline and stringify(meta.assignment.deadline) or ''
+    local initial_data = meta.assignment.initial_data and stringify(meta.assignment.initial_data) or ''
+    local tasks = {}
+    if meta.assignment.tasks then
+      for _, t in ipairs(meta.assignment.tasks) do
+        table.insert(tasks, stringify(t))
+      end
+    end
+    assignment_export = {
+      deadline = deadline,
+      initial_data = initial_data,
+      tasks = tasks
+    }
+  end
+
+  local metadata_export = {
+    profile = profile,
+    ministry = value('ministry'),
+    university = value('university'),
+    institute = value('institute'),
+    department = value('department'),
+    work_type = value('work-type'),
+    discipline = value('discipline'),
+    title = stringify(doc.meta.title),
+    author = stringify(doc.meta.author),
+    group = value('group'),
+    supervisor = value('supervisor'),
+    normocontroler = value('normocontroler'),
+    city = value('city'),
+    year = value('year'),
+    assignment = assignment_export
+  }
+
+  out = assert(io.open('.quarto/academic-metadata.json', 'wb'))
+  out:write(quarto.json.encode(metadata_export)); out:close()
+
   local diagnostics = {}
   local function get_input_file()
     if quarto and quarto.doc and quarto.doc.input_file then
