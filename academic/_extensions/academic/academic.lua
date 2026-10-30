@@ -15,6 +15,67 @@ local function styled(s,style)
   return pandoc.Div({pandoc.Para(s)},{['custom-style']=style})
 end
 
+local function is_callout_note(div)
+  if not (div and div.t == 'Div') then return false end
+  if div.classes:includes('callout-note') then return true end
+  if div.attributes and div.attributes['callout'] == 'note' then return true end
+  if div.classes:includes('callout') and div.attributes and div.attributes['type'] == 'note' then return true end
+  if div.classes:includes('callout') and div.classes:includes('note') then return true end
+  return false
+end
+
+local function collect_paras(blocks)
+  local paras = {}
+  for _, b in ipairs(blocks) do
+    if b.t == 'Para' or b.t == 'Plain' then
+      table.insert(paras, pandoc.Para(b.content))
+    elseif b.t == 'Div' or b.t == 'BlockQuote' then
+      if not (b.classes and (b.classes:includes('callout-header') or b.classes:includes('callout-title') or b.classes:includes('callout-icon-container'))) then
+        local inner = collect_paras(b.content)
+        for _, p in ipairs(inner) do
+          table.insert(paras, p)
+        end
+      end
+    end
+  end
+  return paras
+end
+
+local function transform_callout_note(div)
+  if not is_callout_note(div) then return nil end
+
+  local paras = collect_paras(div.content)
+  if #paras == 0 then
+    return {}
+  elseif #paras == 1 then
+    local inlines = {
+      pandoc.Str("Примечание"),
+      pandoc.Space(),
+      pandoc.Str("—"),
+      pandoc.Space()
+    }
+    for _, inline in ipairs(paras[1].content) do
+      table.insert(inlines, inline)
+    end
+    return pandoc.Para(inlines)
+  else
+    local result = {
+      pandoc.Para({ pandoc.Str("Примечания") })
+    }
+    for i, p in ipairs(paras) do
+      local inlines = {
+        pandoc.Str(tostring(i)),
+        pandoc.Space()
+      }
+      for _, inline in ipairs(p.content) do
+        table.insert(inlines, inline)
+      end
+      table.insert(result, pandoc.Para(inlines))
+    end
+    return result
+  end
+end
+
 local function find_dash_in_string(s)
   local dashes = {"—", "–", "-"}
   local min_pos = nil
@@ -819,4 +880,4 @@ local function cite(c)
   end
   return nil
 end
-return {{Pandoc=process},{Para=para},{Cite=cite}}
+return {{Div=transform_callout_note},{Pandoc=process},{Para=para},{Cite=cite}}
