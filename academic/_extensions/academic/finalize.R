@@ -61,26 +61,56 @@ for (output in outputs) {
   next_id <- max(c(0, as.integer(vapply(bookmarks, attr, "", name = "w:id"))), na.rm = TRUE) + 1
   for (bookmark in bookmarks) {
     name <- attr(bookmark, "w:name")
-    if (!grepl("^(sec|fig|tbl|eq)-", name)) next
+    if (!grepl("^(sec|fig|tbl|eq|lst)-", name)) next
     normalized <- gsub("[^A-Za-z0-9_]", "_", name)
     put(bookmark, "name", normalized)
-    if (!grepl("^(fig|tbl)-", name)) next
-    label <- if (startsWith(name, "fig-")) "Рисунок" else "Таблица"
+    if (!grepl("^(fig|tbl|lst)-", name)) next
+    label <- if (startsWith(name, "fig-")) "Рисунок" else if (startsWith(name, "tbl-")) "Таблица" else "Листинг"
     candidates <- xml_find_all(bookmark, "following::w:p", ns)
     captions <- candidates[startsWith(vapply(candidates, text, ""), label)]
     if (!length(captions)) stop("Missing caption for ", name)
     caption <- captions[[1]]
     caption_text <- sub(paste0("^", label, "[[:space:]\u00a0]+[0-9.]+[[:space:]\u00a0]*[—–:.-]?[[:space:]]*"), "", text(caption), perl = TRUE)
     if (!nzchar(caption_text)) stop("Empty caption for ", name)
+
+    # Check if object is inside an appendix section (matching only heading paragraphs)
+    preceding_headings <- xml_find_all(bookmark, "preceding::w:p[w:pPr/w:pStyle[@w:val='UnnumberedHeading' or @w:val='Heading1'] or starts-with(w:pPr/w:pStyle/@w:val, 'Heading')]", ns)
+    app_letter <- NULL
+    if (length(preceding_headings)) {
+      h_texts <- vapply(preceding_headings, text, "")
+      app_indices <- grep("^ПРИЛОЖЕНИЕ\\s+", h_texts, ignore.case = TRUE)
+      if (length(app_indices)) {
+        last_app_text <- h_texts[app_indices[length(app_indices)]]
+        m <- regmatches(last_app_text, regexpr("^ПРИЛОЖЕНИЕ\\s+([А-ЯA-Z0-9]+)", last_app_text, ignore.case = TRUE))
+        if (length(m)) {
+          app_letter <- sub("^ПРИЛОЖЕНИЕ\\s+", "", m, ignore.case = TRUE)
+          app_letter <- strsplit(app_letter, "[\r\n\t ]+")[[1]][[1]]
+        }
+      }
+    }
+
     old_id <- attr(bookmark, "w:id")
     xml_remove(xml_find_all(doc, paste0("//w:bookmarkEnd[@w:id='", old_id, "']"), ns))
     xml_remove(bookmark)
     xml_remove(xml_find_all(caption, "./*[not(self::w:pPr)]", ns))
-    xml_add_child(caption, node(run(paste0(label, " "))))
-    xml_add_child(caption, node(paste0('<w:bookmarkStart w:id="', next_id, '" w:name="', normalized, '"/>')))
-    for (part in xml_children(read_xml(paste0('<root xmlns:w="', W, '">', field(paste0("SEQ ", label, " \\* ARABIC")), '</root>')))) xml_add_child(caption, part)
-    xml_add_child(caption, node(paste0('<w:bookmarkEnd w:id="', next_id, '"/>')))
-    xml_add_child(caption, node(run(paste0(" — ", caption_text))))
+
+    if (!is.null(app_letter) && nzchar(app_letter)) {
+      base_seq <- if (startsWith(name, "fig-")) "Figure" else if (startsWith(name, "tbl-")) "Table" else "Listing"
+      seq_code <- paste0("SEQ ", base_seq, "_", app_letter, " \\* ARABIC")
+      xml_add_child(caption, node(run(paste0(label, " "))))
+      xml_add_child(caption, node(paste0('<w:bookmarkStart w:id="', next_id, '" w:name="', normalized, '"/>')))
+      xml_add_child(caption, node(run(paste0(app_letter, "."))))
+      for (part in xml_children(read_xml(paste0('<root xmlns:w="', W, '">', field(seq_code), '</root>')))) xml_add_child(caption, part)
+      xml_add_child(caption, node(paste0('<w:bookmarkEnd w:id="', next_id, '"/>')))
+      xml_add_child(caption, node(run(paste0(" — ", caption_text))))
+    } else {
+      seq_code <- paste0("SEQ ", label, " \\* ARABIC")
+      xml_add_child(caption, node(run(paste0(label, " "))))
+      xml_add_child(caption, node(paste0('<w:bookmarkStart w:id="', next_id, '" w:name="', normalized, '"/>')))
+      for (part in xml_children(read_xml(paste0('<root xmlns:w="', W, '">', field(seq_code), '</root>')))) xml_add_child(caption, part)
+      xml_add_child(caption, node(paste0('<w:bookmarkEnd w:id="', next_id, '"/>')))
+      xml_add_child(caption, node(run(paste0(" — ", caption_text))))
+    }
     next_id <- next_id + 1
   }
   # A numbered equation stays editable; attach its field to the same paragraph.
@@ -100,7 +130,7 @@ for (output in outputs) {
     if (inherits(pr,"xml_missing")) pr <- xml_add_child(p,node("<w:pPr/>"),.where=0)
     if (!length(xml_find_all(pr,"./w:keepNext",ns))) xml_add_child(pr,node("<w:keepNext/>"))
   }
-  numbers <- xml_find_all(doc, "//w:p[w:r/w:instrText[contains(.,'SEQ Формула')]]", ns)
+  numbers <- xml_find_all(doc, "//w:p[w:r/w:instrText[contains(.,'SEQ Формула') or contains(.,'SEQ Formula')]]", ns)
   section <- xml_find_first(doc, "//w:sectPr[last()]", ns)
   page_size <- xml_find_first(section, "./w:pgSz", ns)
   margins <- xml_find_first(section, "./w:pgMar", ns)
@@ -160,6 +190,42 @@ for (output in outputs) {
   for (sect in sections) {
     if (!length(xml_find_all(sect, "./w:titlePg", ns))) {
       xml_add_child(sect, read_xml(paste0('<w:titlePg xmlns:w="', W, '"/>')))
+    }
+  }
+  # Ensure updateFields w:val="true" in word/settings.xml
+  settings_file <- file.path(folder, "word/settings.xml")
+  if (file.exists(settings_file)) {
+    settings_doc <- read_xml(settings_file)
+    update_fields <- xml_find_all(settings_doc, "//w:updateFields", ns)
+    if (length(update_fields) > 0) {
+      for (uf in update_fields) {
+        put(uf, "val", "true")
+      }
+    } else {
+      xml_add_child(settings_doc, node('<w:updateFields w:val="true"/>'))
+    }
+    write_xml(settings_doc, settings_file)
+  } else {
+    dir.create(file.path(folder, "word"), showWarnings = FALSE, recursive = TRUE)
+    settings_doc <- read_xml(paste0('<w:settings xmlns:w="', W, '"><w:updateFields w:val="true"/></w:settings>'))
+    write_xml(settings_doc, settings_file)
+    rels_file <- file.path(folder, "word/_rels/document.xml.rels")
+    if (file.exists(rels_file)) {
+      rels <- read_xml(rels_file)
+      settings_rel <- xml_find_all(rels, "//*[@Target='settings.xml' or @Target='/word/settings.xml' or @Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings']")
+      if (!length(settings_rel)) {
+        xml_add_child(rels, read_xml(paste0('<Relationship xmlns="', REL, '" Id="rIdSettings" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>')))
+        write_xml(rels, rels_file)
+      }
+    }
+    types_file <- file.path(folder, "[Content_Types].xml")
+    if (file.exists(types_file)) {
+      types <- read_xml(types_file)
+      settings_override <- xml_find_all(types, "//*[@PartName='/word/settings.xml']")
+      if (!length(settings_override)) {
+        xml_add_child(types, read_xml('<Override xmlns="http://schemas.openxmlformats.org/package/2006/content-types" PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>'))
+        write_xml(types, types_file)
+      }
     }
   }
   # Structural preflight: no missing REF targets or duplicate semantic bookmarks.

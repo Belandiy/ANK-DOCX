@@ -59,5 +59,6 @@ jobs:
           mkdir my-starter-project
           cd my-starter-project
           quarto use template .. --no-prompt
-          Rscript -e 'renv::restore()'
+          cp ../academic/.Rprofile .
+          Rscript -e 'source("renv/activate.R"); renv::restore()'
           quarto render --to academic-docx --no-clean
