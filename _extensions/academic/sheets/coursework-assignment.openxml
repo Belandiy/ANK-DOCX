@@ -1,0 +1,17 @@
+<!-- СТО ЮУрГУ 04-2008 Приложение Б: Задание на курсовую работу (susu-coursework-v1) -->
+<assignment-sheet profile="susu-coursework-v1" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:p><w:pPr><w:pStyle w:val="Institution"/></w:pPr><w:r><w:t xml:space="preserve">$ministry$</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="Institution"/></w:pPr><w:r><w:t xml:space="preserve">$university$</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="Institution"/></w:pPr><w:r><w:t xml:space="preserve">$institute$</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="Institution"/></w:pPr><w:r><w:t xml:space="preserve">$department$</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="WorkType"/></w:pPr><w:r><w:t xml:space="preserve">ЗАДАНИЕ на курсовую работу</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="StudentDetails"/></w:pPr><w:r><w:t xml:space="preserve">Студент: $author$, группа: $group$</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="StudentDetails"/></w:pPr><w:r><w:t xml:space="preserve">Тема работы: $title$</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="StudentDetails"/></w:pPr><w:r><w:t xml:space="preserve">Срок сдачи работы: $assignment.deadline$</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="StudentDetails"/></w:pPr><w:r><w:t xml:space="preserve">Исходные данные к работе: $assignment.initial_data$</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="StudentDetails"/></w:pPr><w:r><w:t xml:space="preserve">Перечень подлежащих разработке вопросов:</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="StudentDetails"/><w:ind w:left="709"/></w:pPr><w:r><w:t xml:space="preserve">$assignment.tasks$</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="StudentDetails"/></w:pPr><w:r><w:t xml:space="preserve">Руководитель работы: $supervisor$ ___________________ (подпись)</w:t></w:r></w:p>
+  <w:p><w:pPr><w:pStyle w:val="StudentDetails"/></w:pPr><w:r><w:t xml:space="preserve">Задание принял к исполнению: $author$ ___________________ (подпись)</w:t></w:r></w:p>
+  <w:p><w:r><w:br w:type="page"/></w:r></w:p>
+</assignment-sheet>
