@@ -156,7 +156,7 @@ local function clean_exp_inlines(exp, is_last_row)
         stripped_dash = true
         table.insert(res, pandoc.Str(s))
       end
-    elseif not stripped_dash and inline.t == 'Space' then
+    elseif not stripped_dash and inline.t == 'Space' do
       -- skip leading spaces
     else
       stripped_dash = true
@@ -209,6 +209,82 @@ local function clean_exp_inlines(exp, is_last_row)
   return res
 end
 
+local function math_to_openxml_runs(code)
+  local xml = {}
+  local i = 1
+  while i <= #code do
+    local c = code:sub(i, i)
+    if c == '_' then
+      i = i + 1
+      local sub_txt = ''
+      if code:sub(i, i) == '{' then
+        i = i + 1
+        local close_pos = code:find('}', i, true)
+        if close_pos then
+          sub_txt = code:sub(i, close_pos - 1)
+          i = close_pos + 1
+        end
+      else
+        sub_txt = code:sub(i, i)
+        i = i + 1
+      end
+      table.insert(xml, '<w:r><w:rPr><w:vertAlign w:val="subscript"/></w:rPr><w:t xml:space="preserve">' .. esc(sub_txt) .. '</w:t></w:r>')
+    elseif c == '^' then
+      i = i + 1
+      local super_txt = ''
+      if code:sub(i, i) == '{' then
+        i = i + 1
+        local close_pos = code:find('}', i, true)
+        if close_pos then
+          super_txt = code:sub(i, close_pos - 1)
+          i = close_pos + 1
+        end
+      else
+        super_txt = code:sub(i, i)
+        i = i + 1
+      end
+      table.insert(xml, '<w:r><w:rPr><w:vertAlign w:val="superscript"/></w:rPr><w:t xml:space="preserve">' .. esc(super_txt) .. '</w:t></w:r>')
+    elseif c:match('[a-zA-Z]') then
+      table.insert(xml, '<w:r><w:rPr><w:i/></w:rPr><w:t xml:space="preserve">' .. esc(c) .. '</w:t></w:r>')
+      i = i + 1
+    else
+      table.insert(xml, '<w:r><w:t xml:space="preserve">' .. esc(c) .. '</w:t></w:r>')
+      i = i + 1
+    end
+  end
+  return table.concat(xml, '')
+end
+
+local function inlines_to_openxml_runs(inlines)
+  local xml = {}
+  for _, inline in ipairs(inlines) do
+    if inline.t == 'Str' then
+      table.insert(xml, '<w:r><w:t xml:space="preserve">' .. esc(inline.text) .. '</w:t></w:r>')
+    elseif inline.t == 'Space' then
+      table.insert(xml, '<w:r><w:t xml:space="preserve"> </w:t></w:r>')
+    elseif inline.t == 'SoftBreak' or inline.t == 'LineBreak' then
+      table.insert(xml, '<w:r><w:br/></w:r>')
+    elseif inline.t == 'Math' then
+      table.insert(xml, math_to_openxml_runs(inline.text))
+    elseif inline.t == 'Emph' then
+      local inner = inlines_to_openxml_runs(inline.content)
+      inner = inner:gsub('<w:rPr>', '<w:rPr><w:i/>')
+      inner = inner:gsub('<w:r>', '<w:r><w:rPr><w:i/></w:rPr>')
+      table.insert(xml, inner)
+    elseif inline.t == 'Strong' then
+      local inner = inlines_to_openxml_runs(inline.content)
+      inner = inner:gsub('<w:rPr>', '<w:rPr><w:b/>')
+      inner = inner:gsub('<w:r>', '<w:r><w:rPr><w:b/></w:rPr>')
+      table.insert(xml, inner)
+    elseif inline.t == 'RawInline' and inline.format == 'openxml' then
+      table.insert(xml, inline.text)
+    else
+      table.insert(xml, '<w:r><w:t xml:space="preserve">' .. esc(stringify(inline)) .. '</w:t></w:r>')
+    end
+  end
+  return table.concat(xml, '')
+end
+
 local function rows_to_openxml_table(rows)
   if #rows == 0 then return nil end
 
@@ -225,25 +301,13 @@ local function rows_to_openxml_table(rows)
     local sym_inlines = clean_sym_inlines(r.sym, is_first)
     local exp_inlines = clean_exp_inlines(r.exp, is_last)
 
-    local sym_doc = pandoc.Pandoc({pandoc.Para(sym_inlines)})
-    local exp_doc = pandoc.Pandoc({pandoc.Para(exp_inlines)})
-
-    local sym_xml = pandoc.write(sym_doc, 'openxml')
-    local exp_xml = pandoc.write(exp_doc, 'openxml')
+    local sym_runs = inlines_to_openxml_runs(sym_inlines)
+    local exp_runs = inlines_to_openxml_runs(exp_inlines)
 
     local pPr = '<w:pPr><w:pStyle w:val="FormulaDefinitions"/><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/><w:ind w:left="0" w:firstLine="0"/></w:pPr>'
 
-    local function prepare_cell(p_xml, width)
-      if p_xml:find('<w:pPr>') then
-        p_xml = p_xml:gsub('<w:pPr>.-</w:pPr>', pPr)
-      else
-        p_xml = p_xml:gsub('<w:p>', '<w:p>' .. pPr, 1)
-      end
-      return '<w:tc><w:tcPr><w:tcW w:w="' .. width .. '" w:type="dxa"/></w:tcPr>' .. p_xml .. '</w:tc>'
-    end
-
-    local cell1 = prepare_cell(sym_xml, col1_width)
-    local cell2 = prepare_cell(exp_xml, col2_width)
+    local cell1 = '<w:tc><w:tcPr><w:tcW w:w="' .. col1_width .. '" w:type="dxa"/></w:tcPr><w:p>' .. pPr .. sym_runs .. '</w:p></w:tc>'
+    local cell2 = '<w:tc><w:tcPr><w:tcW w:w="' .. col2_width .. '" w:type="dxa"/></w:tcPr><w:p>' .. pPr .. exp_runs .. '</w:p></w:tc>'
 
     local tr = '<w:tr><w:trPr><w:cantSplit/></w:trPr>' .. cell1 .. cell2 .. '</w:tr>'
     table.insert(tr_xmls, tr)
@@ -579,9 +643,6 @@ local function process(doc)
       end,
       Figure = function(fig)
         if fig.identifier and fig.identifier:match('^' .. prefix) then found_id = fig.identifier end
-      end,
-      CodeBlock = function(cb)
-        if cb.identifier and cb.identifier:match('^' .. prefix) then found_id = cb.identifier end
       end
     })
     return found_id
@@ -601,7 +662,7 @@ local function process(doc)
     pandoc.walk_block(para_block, {
       Cite = function(c)
         for _, citation in ipairs(c.citations) do
-          if citation.id == obj_id or citation.id == obj_id:gsub('^fig%-', ''):gsub('^tbl%-', ''):gsub('^lst%-', '') then
+          if citation.id == obj_id or citation.id == obj_id:gsub('^fig%-', ''):gsub('^tbl%-', '') then
             found = true
           end
         end
@@ -674,24 +735,6 @@ local function process(doc)
         end
       end
 
-      local lst_id = get_object_id(b, 'lst-')
-      if lst_id and not seen_objects[lst_id] then
-        seen_objects[lst_id] = true
-        if not check_ref(last_text_para, lst_id) then
-          add_diagnostic(
-            'LST_REF_MISSING',
-            'Warning',
-            input_file,
-            current_section_id,
-            current_section_title,
-            lst_id,
-            'объект #' .. lst_id,
-            'Перед листингом #' .. lst_id .. ' в предшествующем абзаце отсутствует ссылка @' .. lst_id .. '.',
-            'Добавьте во вступительный абзац перед листингом текстовую ссылку на листинг (@' .. lst_id .. ').'
-          )
-        end
-      end
-
       local tbl_id = get_object_id(b, 'tbl-')
       if tbl_id and not seen_objects[tbl_id] then
         seen_objects[tbl_id] = true
@@ -747,7 +790,7 @@ local function cite(c)
 
   if is_crossref then
     if #c.citations > 1 then
-      error('Grouped cross-references (fig, tbl, eq, sec, lst) are not yet supported; use individual cross-references.')
+      error('Grouped cross-references (fig, tbl, eq, sec) are not yet supported; use individual cross-references.')
     end
     local id = c.citations[1].id
     local reference = field('REF ' .. bookmark(id) .. (id:match('^sec%-') and ' \\n' or '') .. ' \\h')

@@ -25,6 +25,4 @@ contributes:
       crossref:
         fig-title: "Рисунок"
         tbl-title: "Таблица"
-        lst-title: "Листинг"
         title-delim: " — "
-        lst-prefix: "листинге"
