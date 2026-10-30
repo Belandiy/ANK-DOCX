@@ -735,6 +735,24 @@ local function process(doc)
         end
       end
 
+      local lst_id = get_object_id(b, 'lst-')
+      if lst_id and not seen_objects[lst_id] then
+        seen_objects[lst_id] = true
+        if not check_ref(last_text_para, lst_id) then
+          add_diagnostic(
+            'LST_REF_MISSING',
+            'Warning',
+            input_file,
+            current_section_id,
+            current_section_title,
+            lst_id,
+            'объект #' .. lst_id,
+            'Перед листингом #' .. lst_id .. ' в предшествующем абзаце отсутствует ссылка @' .. lst_id .. '.',
+            'Добавьте во вступительный абзац перед листингом текстовую ссылку на листинг (@' .. lst_id .. ').'
+          )
+        end
+      end
+
       local tbl_id = get_object_id(b, 'tbl-')
       if tbl_id and not seen_objects[tbl_id] then
         seen_objects[tbl_id] = true
