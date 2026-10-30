@@ -51,3 +51,14 @@ jobs:
         run: |
           cd academic
           quarto render --to academic-docx --no-clean
+
+      - name: Validate Quarto Starter Template Creation and Render
+        env:
+          ACADEMIC_SKIP_WORD: "1"
+        run: |
+          mkdir my-starter-project
+          cd my-starter-project
+          quarto use template .. --no-prompt
+          cp ../academic/.Rprofile .
+          Rscript -e 'source("renv/activate.R"); renv::restore()'
+          quarto render --to academic-docx --no-clean

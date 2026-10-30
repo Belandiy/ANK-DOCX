@@ -5,6 +5,7 @@ quarto-required: ">=1.10.0"
 contributes:
   formats:
     docx:
+      csl: gost-r-7-0-5-2008-numeric.csl
       reference-doc: academic.docx
       template: document.openxml
       toc: true

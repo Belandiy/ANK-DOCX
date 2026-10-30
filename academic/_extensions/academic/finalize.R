@@ -241,7 +241,11 @@ for (output in outputs) {
   if (Sys.getenv("ACADEMIC_SKIP_WORD") != "1") {
     if (.Platform$OS.type != "windows") stop("Final DOCX currently requires the Windows C# service and desktop Word")
     service <- Sys.getenv("ACADEMIC_DOCX_SERVICE")
-    if (!nzchar(service)) service <- "../.tools/academic-docx/academic-docx.exe"
+    if (!nzchar(service)) {
+      candidates <- c(".tools/academic-docx/academic-docx.exe", "../.tools/academic-docx/academic-docx.exe")
+      existing <- candidates[file.exists(candidates)]
+      if (length(existing)) service <- existing[[1]] else service <- "../.tools/academic-docx/academic-docx.exe"
+    }
     if (!file.exists(service)) stop("Academic DOCX service is missing: run setup-academic.cmd or set ACADEMIC_DOCX_SERVICE")
     report <- normalizePath(file.path(".quarto",paste0(basename(output),".finalize.json")), mustWork=FALSE)
     status <- system2(normalizePath(service), c("finalize-word", shQuote(output), "--report", shQuote(report)))
