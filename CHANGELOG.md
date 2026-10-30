@@ -5,6 +5,11 @@
 ## [Unreleased] - 2026-10-30
 
 ### Добавлено (Added)
+- **Всестороннее тестовое покрытие ANK-DOCX (.NET 10 / OpenXML SDK)**:
+  - Доведено до 38 кроссплатформенных xUnit-тестов, запускающихся на любой ОС без установленного MS Word.
+  - Новые тестовые наборы: `DocxInspectionTests.cs` (парсинг шапок таблиц `w:tblHeader`, объединения ячеек `w:gridSpan`, `w:vMerge`, подсчет формул `OfficeMath`), `TemplateIntegrityTests.cs` (валидация манифеста `template.yml`, `_quarto.yml`, `metadata.yml`), `JsonReportTests.cs` (сериализация кириллицы и snake_case).
+  - Расширены `DiagnosticsTests.cs` (`TBL_REF_MISSING`, `LST_REF_MISSING`, консольное форматирование), `ExplicationTests.cs` (индексы и степени в переменных, пунктуация), `AppendixTests.cs` (многобуквенные приложения А-Б-В, изоляция полей `SEQ`), `ReferenceTests.cs` (заголовки 1–6 уровней, стили `TOC Heading` и `UnnumberedHeading`).
+  - Закрыто Issue #26 через PR #27.
 - **Quarto Starter Template (`quarto use template Belandiy/ANK-DOCX <name>`)**:
   - Манифест шаблона `template.yml`, правила игнорирования `.quartoignore`.
   - Минимальный starter-проект (`_quarto.yml`, `metadata.yml`, `index.qmd`, `references.qmd`, `references.bib`, `renv.lock`).
