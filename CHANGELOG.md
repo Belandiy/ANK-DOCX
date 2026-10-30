@@ -1,0 +1,40 @@
+# Changelog
+
+Все значимые изменения проекта фиксируются в этом документе.
+
+## [Unreleased] - 2026-10-30
+
+### Добавлено (Added)
+- **Quarto Starter Template (`quarto use template Belandiy/ANK-DOCX <name>`)**:
+  - Манифест шаблона `template.yml`, правила игнорирования `.quartoignore`.
+  - Минимальный starter-проект (`_quarto.yml`, `metadata.yml`, `index.qmd`, `references.qmd`, `references.bib`, `renv.lock`).
+  - Интеграция автоматической валидации создания и рендера шаблона в GitHub Actions CI.
+  - Закрыто Issue #2 через PR #25.
+- **Автоматическое выравнивание экспликации формул («где ... — ...» по СТО ЮУрГУ 04/17/19 и ГОСТ 2.105)**:
+  - Фильтр `academic.lua` автоматически конвертирует блоки пояснения символов («где ... — ...») в невидимые двухколоночные безрамочные таблицы OpenXML с отступом 1.25 см (709 dxa).
+  - Поддержка математических индексов, надстрочных знаков и переменных (`math_to_openxml_runs`).
+  - Юнит-тесты структуры таблицы и OpenXML-схемы в `ExplicationTests.cs`.
+  - Закрыто Issue #19 через PR #24.
+- **Оформление и перекрёстные ссылки листингов кода (СТО 04-2008)**:
+  - Локализация crossref-параметров листингов (`lst-title: "Листинг"`, `title-delim: " — "`, `lst-prefix: "листинге"`).
+  - Стили Word: `Source Code` и `Code` (Courier New 12 pt, одинарный интервал, без рамок), `Listing Caption` (Times New Roman 14 pt, по левому краю, `keepNext`).
+  - Разрешение перекрёстных ссылок `@lst-id` через `REF` поля и диагностика ссылок перед листингами (`LST_REF_MISSING`).
+  - Юнит-тесты в `ReferenceTests.cs`.
+  - Закрыто Issue #18 через PR #22.
+- **Нормативные приложения (ГОСТ 2.105 / СТО ЮУрГУ 04-2008)**:
+  - Автоматическая буквенная нумерация (А, Б, В... без исключенных букв).
+  - Префиксные поля `SEQ Formula_A`, `SEQ Figure_A`, `SEQ Table_A`, `SEQ Listing_A`.
+  - Стиль `UnnumberedHeading` и юнит-тесты в `AppendixTests.cs`.
+  - Закрыто Issue #20 через PR #23.
+- **Кроссплатформенное обновление полей Word (`w:updateFields`)**:
+  - Автоматическое добавление `<w:updateFields w:val="true"/>` в `settings.xml` через `ReferenceStyles.cs` и `finalize.R`.
+  - Закрыто Issue #17 через PR #21.
+- **Нормативный титульный лист профиля `susu-coursework-v1`**:
+  - Генерация титульника из метаданных и подавление номеров на первой странице через `<w:titlePg/>`.
+  - Закрыто Issue #13 через PR #16.
+- **Автоматический CI пайплайн (GitHub Actions)**:
+  - `.github/workflows/ci.yml`: сборка и прогон C# тестов (.NET 10), R renv restore, Quarto trial render и валидация Starter Template.
+  - Закрыто Issue #14 через PR #15.
+- **Диагностика AST и сводка в CLI**:
+  - Правила `SEC_INTRO_MISSING`, `FIG_REF_MISSING`, `TBL_REF_MISSING`, `LST_REF_MISSING`.
+  - Закрыты Issue #6, #11 через PR #10, #12.
