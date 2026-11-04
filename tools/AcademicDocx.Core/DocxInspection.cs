@@ -78,7 +78,7 @@ public sealed record DiagnosticReport(IReadOnlyList<DiagnosticItem> Diagnostics)
 public sealed record SchemaError(string Id, string Type, string Description, string? Part, string? Path);
 public sealed record ValidationReport(string File, int ErrorCount, IReadOnlyList<SchemaError> Errors);
 public sealed record TableFacts(IReadOnlyList<string[]> Rows, int HeaderRows, IReadOnlyList<string> HeaderShape,
-    int MathCount, IReadOnlyList<int> GridWidths);
+    int MathCount, IReadOnlyList<int> GridWidths, bool HasHeaderRepeat = false, bool HasCantSplit = false);
 public sealed record CitationFacts(IReadOnlyList<string> CitedKeys, IReadOnlyList<string> SourceTags,
     IReadOnlyList<string> UncitedSources);
 public sealed record DocumentFacts(int MathCount, int SequenceCount, IReadOnlyList<TableFacts> Tables,
@@ -148,10 +148,19 @@ public static class DocxInspection
                 ?? (props?.VerticalMerge?.Val?.HasValue == true ? props.VerticalMerge.Val.Value.ToString().ToLowerInvariant() : (props?.VerticalMerge is null ? "none" : "continue"));
             return $"{props?.GridSpan?.Val?.Value ?? 1}:{vMergeStr}";
         }).ToArray();
+        var hasHeaderRepeat = rows.Length > 0 && (rows[0].TableRowProperties?.GetFirstChild<W.TableHeader>() is { } th && th.Val?.Value != W.OnOffOnlyValues.Off);
+        var hasCantSplit = rows.Length > 0 && rows.All(row =>
+        {
+            var cantSplit = row.TableRowProperties?.GetFirstChild<W.CantSplit>();
+            return cantSplit is not null && cantSplit.Val?.Value != W.OnOffOnlyValues.Off;
+        });
+
         return new(rows.Select(row => row.Elements<W.TableCell>().Select(cell => cell.InnerText).ToArray()).ToArray(),
             headerRows, shape, table.Descendants<M.OfficeMath>().Count(),
             table.GetFirstChild<W.TableGrid>()?.Elements<W.GridColumn>()
-                .Select(column => int.Parse(column.Width?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture)).ToArray() ?? []);
+                .Select(column => int.Parse(column.Width?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture)).ToArray() ?? [],
+            hasHeaderRepeat,
+            hasCantSplit);
     }
 
     public static CitationFacts ReadCitations(string path)

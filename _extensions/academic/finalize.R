@@ -61,6 +61,35 @@ for (output in outputs) {
     for (part in content) xml_add_sibling(wrapper, part, .where = "before")
     xml_remove(wrapper)
   }
+
+  # Ensure tblHeader on first row and cantSplit on all rows for substantive tables
+  # Exclude formula explication tables (FormulaDefinitions style)
+  tables <- xml_find_all(doc, "//w:tbl", ns)
+  for (tbl in tables) {
+    # Skip formula definition tables
+    if (length(xml_find_all(tbl, ".//w:pStyle[@w:val='FormulaDefinitions']", ns))) next
+
+    rows <- xml_find_all(tbl, "./w:tr", ns)
+    if (!length(rows)) next
+
+    for (r_idx in seq_along(rows)) {
+      row <- rows[[r_idx]]
+      tr_pr <- xml_find_first(row, "./w:trPr", ns)
+      if (inherits(tr_pr, "xml_missing")) {
+        tr_pr <- xml_add_child(row, node("<w:trPr/>"), .where = 0)
+      }
+
+      # Ensure cantSplit in all rows
+      if (!length(xml_find_all(tr_pr, "./w:cantSplit", ns))) {
+        xml_add_child(tr_pr, node("<w:cantSplit/>"))
+      }
+
+      # Ensure tblHeader on the first row (header row)
+      if (r_idx == 1 && !length(xml_find_all(tr_pr, "./w:tblHeader", ns))) {
+        xml_add_child(tr_pr, node("<w:tblHeader/>"))
+      }
+    }
+  }
   # Preserve unnumbered book headings despite numbering inherited from Word styles.
   headings <- jsonlite::fromJSON(".quarto/academic-headings.json", simplifyVector = FALSE)
   for (heading in headings) {
