@@ -81,6 +81,7 @@ public sealed record TableFacts(IReadOnlyList<string[]> Rows, int HeaderRows, IR
     int MathCount, IReadOnlyList<int> GridWidths, bool HasHeaderRepeat = false, bool HasCantSplit = false);
 public sealed record CitationFacts(IReadOnlyList<string> CitedKeys, IReadOnlyList<string> SourceTags,
     IReadOnlyList<string> UncitedSources);
+public sealed record TocFacts(bool HasToc, bool HasNativeField, bool IsDirty, string? Title);
 public sealed record DocumentFacts(int MathCount, int SequenceCount, IReadOnlyList<TableFacts> Tables,
     IReadOnlyList<string> Fields, IReadOnlyList<string> SourceTags);
 
@@ -187,6 +188,28 @@ public static class DocxInspection
 
         var uncited = sourceTags.Where(tag => !citedKeys.Contains(tag)).Distinct().ToArray();
         return new(citedKeys, sourceTags, uncited);
+    }
+
+    public static TocFacts ReadToc(WordprocessingDocument doc)
+    {
+        var body = doc.MainDocumentPart?.Document?.Body;
+        if (body == null) return new TocFacts(false, false, false, null);
+
+        var hasField = body.Descendants<W.FieldCode>().Any(fc => fc.Text.Contains("TOC")) ||
+                       body.Descendants<W.SimpleField>().Any(sf => sf.Instruction?.Value?.Contains("TOC") == true);
+        var isDirty = body.Descendants<W.FieldChar>().Any(fc => fc.FieldCharType?.Value == W.FieldCharValues.Begin && fc.Dirty?.Value == true);
+
+        var tocHeading = body.Descendants<W.Paragraph>()
+            .FirstOrDefault(p => p.ParagraphProperties?.ParagraphStyleId?.Val?.Value == "TOCHeading");
+        var title = tocHeading?.InnerText.Trim();
+
+        return new TocFacts(hasField || tocHeading != null, hasField, isDirty, title);
+    }
+
+    public static TocFacts ReadToc(string path)
+    {
+        using var package = WordprocessingDocument.Open(path, false);
+        return ReadToc(package);
     }
 
     // Compare logical rows, not serialization details that Word is allowed to normalize.

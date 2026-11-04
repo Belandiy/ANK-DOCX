@@ -10,7 +10,7 @@ contributes:
       template: document.openxml
       toc: true
       toc-depth: 3
-      toc-title: "Оглавление"
+      toc-title: "СОДЕРЖАНИЕ"
       number-sections: false
       fig-format: svg
       fig-dpi: 600
