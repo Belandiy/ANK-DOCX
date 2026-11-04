@@ -3,7 +3,8 @@ library(xml2)
 W <- "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 B <- "http://schemas.openxmlformats.org/officeDocument/2006/bibliography"
 REL <- "http://schemas.openxmlformats.org/package/2006/relationships"
-ns <- c(w = W, m = "http://schemas.openxmlformats.org/officeDocument/2006/math")
+A <- "http://schemas.openxmlformats.org/drawingml/2006/main"
+ns <- c(w = W, m = "http://schemas.openxmlformats.org/officeDocument/2006/math", a = A)
 escape <- function(x) {
   x <- gsub("&", "&amp;", as.character(x), fixed = TRUE)
   x <- gsub("<", "&lt;", x, fixed = TRUE)
@@ -28,7 +29,31 @@ for (output in outputs) {
   # An incompatible SVG converter may exit successfully but emit an empty PNG.
   media <- list.files(file.path(folder, "word/media"), full.names = TRUE)
   if (length(media) && any(file.info(media)$size == 0)) stop("Empty embedded image: check the SVG converter; this DOCX is not ready")
+
+  # Optional grayscale conversion of raster images in word/media/
+  if (requireNamespace("magick", quietly = TRUE)) {
+    raster_files <- media[grepl("[.](png|jpe?g)$", media, ignore.case = TRUE)]
+    for (img_path in raster_files) {
+      tryCatch({
+        img <- magick::image_read(img_path)
+        img_gray <- magick::image_convert(img, type = "Grayscale")
+        magick::image_write(img_gray, path = img_path)
+      }, error = function(e) {
+        # Keep original image if processing fails
+      })
+    }
+  }
+
   doc <- read_xml(file.path(folder, "word/document.xml"))
+
+  # Automatically convert illustrations to grayscale via DrawingML <a:grayscl/>
+  blips <- xml_find_all(doc, "//a:blip", ns)
+  for (blip in blips) {
+    if (!length(xml_find_all(blip, "./a:grayscl", ns))) {
+      grayscl_node <- read_xml(paste0('<a:grayscl xmlns:a="', A, '"/>'))
+      xml_add_child(blip, grayscl_node, .where = 0)
+    }
+  }
   # Flatten only Quarto one-cell figure/table containers identified by semantic IDs.
   wrappers <- xml_find_all(doc, "//w:tbl[count(w:tr)=1 and count(w:tr/w:tc)=1][w:tr/w:tc/w:bookmarkStart[starts-with(@w:name,'tbl-') or starts-with(@w:name,'fig-')]]", ns)
   for (wrapper in wrappers) {
