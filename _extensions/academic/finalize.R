@@ -454,6 +454,30 @@ for (output in outputs) {
     }
   }
 
+  # Standardize TOC heading to uppercase "СОДЕРЖАНИЕ" per GOST 2.105 / STO SUSU
+  toc_headings <- xml_find_all(doc, "//w:p[w:pPr/w:pStyle[@w:val='TOCHeading']]", ns)
+  for (h in toc_headings) {
+    t_nodes <- xml_find_all(h, ".//w:t", ns)
+    if (length(t_nodes)) {
+      xml_text(t_nodes[[1]]) <- "СОДЕРЖАНИЕ"
+      if (length(t_nodes) > 1) {
+        for (i in 2:length(t_nodes)) xml_remove(t_nodes[[i]])
+      }
+    }
+  }
+
+  # Ensure w:dirty="true" on all TOC field begins so Word updates TOC automatically on open
+  toc_fields <- xml_find_all(doc, "//w:instrText[contains(text(), 'TOC')]", ns)
+  for (t in toc_fields) {
+    p <- xml_find_first(t, "ancestor::w:p", ns)
+    if (!inherits(p, "xml_missing")) {
+      fld_begin <- xml_find_first(p, ".//w:fldChar[@w:fldCharType='begin']", ns)
+      if (!inherits(fld_begin, "xml_missing")) {
+        xml_set_attr(fld_begin, "w:dirty", "true", ns = c(w = W))
+      }
+    }
+  }
+
   # Ensure title page page number hiding (<w:titlePg/>) in section properties
   sections <- xml_find_all(doc, "//w:sectPr", ns)
   for (sect in sections) {
